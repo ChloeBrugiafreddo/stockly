@@ -4,6 +4,16 @@ Format : [Keep a Changelog](https://keepachangelog.com)
 Versioning : [Semantic Versioning](https://semver.org)
 
 ---
+## [1.3.0] - 2025-05-06
+### Added
+- Layout principal responsive mobile/tablette/desktop
+- Sidebar avec navigation et liens actifs
+- Topbar avec logo Stockly, recherche, notifications, avatar
+- Bottom navigation mobile
+- Dark/light mode switch avec next-themes
+- Logo dynamique selon le thème
+- Page dashboard de base avec stats cards
+
 ## [1.2.0] - 2025-05-06
 ### Added
 - Seed des secteurs (Automobile, Textile, Alimentaire) avec modules

@@ -5,6 +5,8 @@ bcryptjs : Hasher les mots de passe
 zod : Valider les données des formulaires
 xlsx : Export Excel
 jspdf + jspdf-autotable : Export PDF
+next-themes : gère le switch dark/light mode — c'est lui qui ajoute la classe dark sur le <html> et mémorise le choix de l'utilisateur dans le localStorage.
+lucide-react : c'est la bibliothèque d'icônes qu'on utilise dans la sidebar et la topbar — les icônes LayoutDashboard, Package, Truck, etc. C'est léger, propre et parfaitement intégré à React.
 
 => Chaque doit feature comme ça : 
 git checkout develop
