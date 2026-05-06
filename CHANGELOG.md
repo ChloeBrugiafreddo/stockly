@@ -4,6 +4,14 @@ Format : [Keep a Changelog](https://keepachangelog.com)
 Versioning : [Semantic Versioning](https://semver.org)
 
 ---
+## [1.1.0] - 2025-05-06
+### Added
+- Modèles Mongoose complets : Company, Sector, Role, User
+- Modèles entrepôts : Warehouse, WarehouseLocation
+- Modèles produits : Category, Product, Stock, StockMovement
+- Modèles commercial : Supplier, Customer, Order, Invoice
+- Modèles personnalisation : CustomField, CustomFieldValue
+- Index MongoDB sur SKU (unique par company),Stock (unique par produit/entrepôt/emplacement), CustomFieldValue
 
 ## [Unreleased]
 ### Planned

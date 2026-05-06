@@ -1,7 +1,48 @@
-Voici à quoi sert chaque package :
+=> Voici à quoi sert chaque package :
 mongoose : Modèles et connexion MongoDB
 next-auth@beta : Authentification (sessions, JWT)
 bcryptjs : Hasher les mots de passe
 zod : Valider les données des formulaires
 xlsx : Export Excel
 jspdf + jspdf-autotable : Export PDF
+
+=> Chaque doit feature comme ça : 
+git checkout develop
+git checkout -b feat/prenom-nomdelafeature
+
+=> chaque modèle représente concrètement :
+Identité & accès
+
+Company.ts — une entreprise cliente qui utilise Stockly (ex: le garage Aurora Racing, une boutique textile...)
+Sector.ts — les domaines métiers disponibles (Automobile, Textile, Alimentaire, ou un domaine custom)
+Role.ts — les rôles dans une entreprise (Admin, Magasinier, Commercial...) avec leurs permissions
+User.ts — un utilisateur, toujours rattaché à une entreprise et un rôle
+
+Entrepôts
+
+Warehouse.ts — un entrepôt physique d'une entreprise
+WarehouseLocation.ts — un emplacement précis dans cet entrepôt (ex: "Étagère A3 rangée 2")
+
+Produits & stock
+
+Category.ts — les catégories de produits, hiérarchiques (une catégorie peut avoir une sous-catégorie)
+Product.ts — un produit, avec sa référence SKU, son code-barres, son prix... C'est le socle commun à tous les domaines
+Stock.ts — la quantité disponible d'un produit dans un entrepôt précis, avec les seuils d'alerte
+StockMovement.ts — chaque entrée ou sortie de stock est enregistrée ici, avec qui l'a fait, pourquoi, et depuis quelle commande. C'est la traçabilité complète. Ce fichier ne se supprime jamais
+
+Commercial
+
+Supplier.ts — un fournisseur (d'où viennent les produits)
+Customer.ts — un client (à qui on vend)
+Order.ts — une commande client, avec les produits commandés et les quantités
+Invoice.ts — la facture liée à une commande
+
+Personnalisation
+
+CustomField.ts — la définition d'un champ supplémentaire créé par l'utilisateur (ex: "Date limite de consommation" pour l'alimentaire)
+CustomFieldValue.ts — la valeur de ce champ pour un produit précis
+
+
+Le lien entre tout ça, en une phrase :
+
+Un User appartient à une Company → qui a des Warehouse → qui stockent des Product → dont les entrées/sorties sont tracées dans StockMovement → liées à des Order de Customer → facturées via Invoice.
