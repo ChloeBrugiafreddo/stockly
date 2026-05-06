@@ -1,0 +1,7 @@
+Voici à quoi sert chaque package :
+mongoose : Modèles et connexion MongoDB
+next-auth@beta : Authentification (sessions, JWT)
+bcryptjs : Hasher les mots de passe
+zod : Valider les données des formulaires
+xlsx : Export Excel
+jspdf + jspdf-autotable : Export PDF
