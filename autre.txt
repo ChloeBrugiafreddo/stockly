@@ -46,3 +46,6 @@ CustomFieldValue.ts — la valeur de ce champ pour un produit précis
 Le lien entre tout ça, en une phrase :
 
 Un User appartient à une Company → qui a des Warehouse → qui stockent des Product → dont les entrées/sorties sont tracées dans StockMovement → liées à des Order de Customer → facturées via Invoice.
+
+
+Les modules = les grandes fonctionnalités activées pour un secteur (ce que le système sait faire)Les catégories = la classification des produits (ce qu'on stocke)Les champs custom = les attributs spécifiques d'un produit dans ce secteur (ce qu'on décrit)
