@@ -43,7 +43,7 @@ sans toucher au code.
 | Personnalisé | Catégories libres définies par l'utilisateur |
 ## Installation (développement local)
 ```bash
-git clone https://github.com/votre-org/stockly.git
+git clone https://github.com/ChloeBrugiafreddo/stockly.git
 cd stockly
 npm install
 cp .env.example .env.local
