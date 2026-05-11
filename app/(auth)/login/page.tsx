@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -31,61 +32,115 @@ export default function LoginPage() {
     router.push('/dashboard')
   }
 
+  const input = {
+    width: '100%',
+    padding: '11px 14px',
+    borderRadius: '10px',
+    border: '1px solid #e2e8f0',
+    fontSize: '14px',
+    color: '#0f172a',
+    background: '#f8fafc',
+    outline: 'none',
+  }
+
+  const label = {
+    display: 'block',
+    fontSize: '13px',
+    fontWeight: '500' as const,
+    color: '#475569',
+    marginBottom: '6px',
+  }
+
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-gray-900">Stockly</h1>
-        <p className="text-gray-500 mt-1">Connectez-vous à votre espace</p>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+    }}>
+      <div style={{
+        background: 'white',
+        borderRadius: '20px',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+        width: '100%',
+        maxWidth: '400px',
+        padding: '40px',
+      }}>
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <Image src="/Logo-fondclair.png" alt="Stockly" width={120} height={40} style={{ objectFit: 'contain' }} />
+          <p style={{ fontSize: '14px', color: '#64748b', marginTop: '8px' }}>
+            Connectez-vous à votre espace
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={label}>Email</label>
+            <input
+              style={input}
+              type="email"
+              required
+              value={form.email}
+              onChange={e => setForm({ ...form, email: e.target.value })}
+              placeholder="vous@exemple.com"
+            />
+          </div>
+
+          <div style={{ marginBottom: '24px' }}>
+            <label style={label}>Mot de passe</label>
+            <input
+              style={input}
+              type="password"
+              required
+              value={form.password}
+              onChange={e => setForm({ ...form, password: e.target.value })}
+              placeholder="••••••••"
+            />
+          </div>
+
+          {error && (
+            <div style={{
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: '10px',
+              padding: '12px 14px',
+              fontSize: '13px',
+              color: '#dc2626',
+              marginBottom: '16px',
+            }}>
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '13px',
+              borderRadius: '12px',
+              background: loading ? '#93c5fd' : '#3b82f6',
+              color: 'white',
+              border: 'none',
+              fontSize: '15px',
+              fontWeight: 600,
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {loading ? 'Connexion…' : 'Se connecter'}
+          </button>
+        </form>
+
+        <p style={{ textAlign: 'center', fontSize: '13px', color: '#64748b', marginTop: '20px' }}>
+          Pas encore de compte ?{' '}
+          <Link href="/register" style={{ color: '#3b82f6', fontWeight: 500, textDecoration: 'none' }}>
+            Créer un compte
+          </Link>
+        </p>
       </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            required
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="vous@exemple.com"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Mot de passe
-          </label>
-          <input
-            type="password"
-            required
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="••••••••"
-          />
-        </div>
-
-        {error && (
-          <p className="text-red-500 text-sm">{error}</p>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition"
-        >
-          {loading ? 'Connexion...' : 'Se connecter'}
-        </button>
-      </form>
-
-      <p className="text-center text-sm text-gray-500 mt-6">
-        Pas encore de compte ?{' '}
-        <Link href="/register" className="text-blue-600 hover:underline">
-          Créer un compte
-        </Link>
-      </p>
     </div>
   )
 }
