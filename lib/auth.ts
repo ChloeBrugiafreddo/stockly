@@ -13,7 +13,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: 'Mot de passe', type: 'password' }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null
         await connectDB()
         const user = await User.findOne({ email: credentials.email })
         if (!user) return null
@@ -24,21 +23,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           name: `${user.firstname} ${user.lastname}`,
           companyId: user.companyId.toString(),
-          role: user.roleId.toString(),
+          role: user.roleId?.toString(),
         }
-      }
+      },
     })
   ],
   callbacks: {
     jwt({ token, user }) {
       if (user) {
+        token.id = user.id
         token.companyId = (user as any).companyId
         token.role = (user as any).role
       }
       return token
     },
     session({ session, token }) {
-      (session.user as any).companyId = token.companyId
+      (session.user as any).id = token.id
+      ;(session.user as any).companyId = token.companyId
       ;(session.user as any).role = token.role
       return session
     }
