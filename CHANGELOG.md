@@ -27,8 +27,7 @@ Versioning : [Semantic Versioning](https://semver.org)
 - CRUD produits : ajout, modification, suppression
 - Mouvements de stock entrée/sortie avec motif
 - Historique des mouvements par produit
-- Routes API GET/POST /api/stocks
-- Routes API PUT/DELETE /api/stocks/[id]
+- Routes API GET/POST /api/stocks, PUT/DELETE /api/stocks/[id]
 - Routes API GET/POST /api/stocks/[id]/movements
 - Route API GET /api/categories
 - Formulaires login et register redesignés avec logo Stockly
