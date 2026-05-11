@@ -13,6 +13,13 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.6.0] - 2025-05-11
+### Added
+- Dashboard avec vraies statistiques (produits, ruptures, stock bas, clients, fournisseurs)
+- Alertes visuelles ruptures et stock bas
+- Liste des 10 derniers mouvements de stock avec produit et motif
+- Route API GET /api/dashboard/stats
+
 ## [1.5.0] - 2025-05-11
 ### Added
 - Page Clients avec CRUD complet (ajout, modification, suppression, recherche)
