@@ -4,6 +4,18 @@ Format : [Keep a Changelog](https://keepachangelog.com)
 Versioning : [Semantic Versioning](https://semver.org)
 
 ---
+## [1.4.0] - 2025-05-11
+### Added
+- Page Stock complète avec tableau, filtres (catégorie, état, recherche)
+- Ajout, modification et suppression de produits
+- Mouvements de stock (entrée/sortie) avec motif
+- Historique des mouvements par produit
+- Routes API : GET/POST /api/stocks, PUT/DELETE /api/stocks/[id]
+- Routes API : GET/POST /api/stocks/[id]/movements
+- Route API : GET /api/categories
+- Formulaires login et register redesignés avec logo
+- lib/models.ts pour l'enregistrement centralisé des modèles Mongoose
+
 ## [1.3.0] - 2025-05-06
 ### Added
 - Layout principal responsive mobile/tablette/desktop
