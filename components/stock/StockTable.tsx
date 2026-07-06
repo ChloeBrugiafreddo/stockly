@@ -1,7 +1,7 @@
 'use client'
 
 import { StockItem } from './StockPageClient'
-import { Pencil, Trash2, Plus, Minus, History, IdCard } from 'lucide-react'
+import { Pencil, Trash2, Plus, Minus, History, IdCard, ShoppingCart } from 'lucide-react'
 
 const etatStyles = {
   OK:      { background: '#f0fdf4', color: '#16a34a' },
@@ -17,9 +17,10 @@ interface Props {
   onMovement: (item: StockItem, type: 'IN' | 'OUT') => void
   onHistory: (item: StockItem) => void
   onIdentity: (item: StockItem) => void
+  onOrder: (item: StockItem) => void
 }
 
-export function StockTable({ items, loading, onEdit, onDelete, onMovement, onHistory, onIdentity }: Props) {
+export function StockTable({ items, loading, onEdit, onDelete, onMovement, onHistory, onIdentity, onOrder }: Props) {
   if (loading) return (
     <div style={{ textAlign: 'center', padding: '48px', color: 'var(--muted)' }}>
       Chargement…
@@ -45,7 +46,7 @@ export function StockTable({ items, loading, onEdit, onDelete, onMovement, onHis
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--card-border)' }}>
-              {['État', 'SKU', 'Nom', 'Catégorie', 'Qté', 'Seuil', 'Prix', 'Actions'].map((h) => (
+              {['État', 'SKU', 'Nom', 'Catégorie', 'Qté', 'Seuil', 'Prix', 'Actions'].map(h => (
                 <th key={h} style={{
                   padding: '12px 16px', textAlign: 'left',
                   fontSize: '12px', fontWeight: 600, color: 'var(--muted)', whiteSpace: 'nowrap',
@@ -61,7 +62,6 @@ export function StockTable({ items, loading, onEdit, onDelete, onMovement, onHis
                 key={item._id}
                 style={{
                   borderBottom: i < items.length - 1 ? '1px solid var(--card-border)' : 'none',
-                  transition: 'background 0.1s',
                 }}
               >
                 {/* État */}
@@ -140,6 +140,8 @@ export function StockTable({ items, loading, onEdit, onDelete, onMovement, onHis
                     >
                       <Minus size={14} />
                     </button>
+
+                    
                     <button
                       onClick={() => onHistory(item)}
                       title="Historique des mouvements"

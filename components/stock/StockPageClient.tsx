@@ -2,11 +2,13 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { Plus, Search, RefreshCw } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { StockTable } from './StockTable'
 import { StockFormModal } from './StockFormModal'
 import { MovementModal } from './MovementModal'
 import { HistoryModal } from './HistoryModal'
 import { ProductIdentityModal } from './ProductIdentityModal'
+import { ReorderReportButton } from './ReorderReportButton'
 
 export interface StockItem {
   _id: string
@@ -23,6 +25,7 @@ export interface StockItem {
 }
 
 export function StockPageClient() {
+  const router = useRouter()
   const [items, setItems] = useState<StockItem[]>([])
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
@@ -73,6 +76,12 @@ export function StockPageClient() {
     if (!confirm('Supprimer ce produit ?')) return
     await fetch(`/api/stocks/${id}`, { method: 'DELETE' })
     load()
+  }
+
+  function handleOrder(item: StockItem) {
+    router.push(
+      `/purchase-orders?prefill=${item._id}&name=${encodeURIComponent(item.name)}&sku=${item.sku}&qty=${Math.max(item.minimumStock - item.totalQuantity, 1)}&price=${item.price}`
+    )
   }
 
   return (
@@ -185,6 +194,7 @@ export function StockPageClient() {
         >
           <RefreshCw size={15} />
         </button>
+        <ReorderReportButton />
       </div>
 
       {/* Tableau */}
@@ -196,6 +206,7 @@ export function StockPageClient() {
         onMovement={(item, type) => setMovementItem({ item, type })}
         onHistory={(item) => setHistoryItem(item)}
         onIdentity={(item) => setIdentityItem(item)}
+        onOrder={handleOrder}
       />
 
       {formOpen && (

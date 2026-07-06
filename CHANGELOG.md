@@ -13,6 +13,16 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.14.0] - 2025-05-11
+### Added
+- Rapport de réapprovisionnement : modale avec liste des produits BAS/RUPTURE
+- Quantités modifiables avant export
+- Export PDF groupé par fournisseur avec coordonnées
+- Route API GET /api/stocks/reorder-report
+### Removed
+- Page commandes fournisseurs (remplacée par le rapport PDF)
+- Bouton panier dans le tableau stock
+
 ## [1.13.0] - 2025-05-11
 ### Added
 - Wizard onboarding 4 étapes pour les nouveaux utilisateurs
