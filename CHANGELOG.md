@@ -13,6 +13,20 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.9.0] - 2025-05-11
+### Added
+- Badge domaine coloré dans la sidebar (Automobile, Textile, Alimentaire)
+- Bouton de déconnexion avec nom et email utilisateur dans la sidebar
+- Placeholders contextuels dans le formulaire stock selon le domaine
+- Système d'alertes intelligentes par domaine (stock, factures, productions)
+- Panneau d'alertes sur le dashboard avec navigation directe
+- Badge rouge sur Dashboard si alertes actives
+- Route API GET /api/alerts
+### Changed
+- SessionProvider ajouté au layout global
+- Domaine métier inclus dans le token JWT et la session
+
+
 ## [1.8.0] - 2025-05-11
 ### Added
 - Page Factures complète avec CRUD, filtres et stats rapides
