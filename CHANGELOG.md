@@ -13,6 +13,16 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.11.0] - 2025-05-11
+### Added
+- Carte d'identité produit : vue complète avec 4 onglets
+- Onglet Vue d'ensemble : stats, infos produit, fournisseur
+- Onglet Mouvements : historique complet avec motifs
+- Onglet Productions : toutes les productions ayant utilisé ce produit
+- Onglet Champs custom : valeurs personnalisées du produit
+- Route API GET /api/stocks/[id]/identity
+- Bouton violet "carte d'identité" dans le tableau stock
+
 ## [1.10.0] - 2025-05-11
 ### Added
 - Page Paramètres complète avec 3 onglets
