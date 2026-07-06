@@ -2,15 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, Users, Truck, FileText, Settings, Car } from 'lucide-react'
+import { LayoutDashboard, Package, Users, Truck, FileText, Settings, Car, Factory } from 'lucide-react'
 
 const navItems = [
-  { href: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/stock',      icon: Package,         label: 'Stock' },
-  { href: '/vehicles',   icon: Car,             label: 'Véhicules' },
-  { href: '/customers',  icon: Users,           label: 'Clients' },
-  { href: '/suppliers',  icon: Truck,           label: 'Fournisseurs' },
-  { href: '/invoices',   icon: FileText,        label: 'Factures' },
+  { href: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/stock',       icon: Package,         label: 'Stock' },
+  { href: '/productions', icon: Factory,         label: 'Productions' },
+  { href: '/customers',   icon: Users,           label: 'Clients' },
+  { href: '/suppliers',   icon: Truck,           label: 'Fournisseurs' },
+  { href: '/invoices',    icon: FileText,        label: 'Factures' },
 ]
 
 export function Sidebar() {

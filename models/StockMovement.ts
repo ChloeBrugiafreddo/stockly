@@ -8,7 +8,7 @@ const StockMovementSchema = new Schema({
   quantity:      { type: Number, required: true },
   reason:        { type: String },
   referenceId:   { type: Schema.Types.ObjectId, default: null },
-  referenceType: { type: String, enum: ['order', 'purchase_order', 'manual', null], default: null },
+  referenceType: { type: String, enum: ['order', 'purchase_order', 'manual', 'production', null], default: null },
   // Module scan (v5.x)
   scanType:      { type: String, enum: ['qrcode', 'barcode', 'serial', null], default: null },
   scanValue:     { type: String },
