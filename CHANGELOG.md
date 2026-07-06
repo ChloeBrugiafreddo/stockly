@@ -13,6 +13,19 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.10.0] - 2025-05-11
+### Added
+- Page Paramètres complète avec 3 onglets
+- Onglet Profil : modifier nom, email, mot de passe
+- Onglet Entreprise : modifier infos + affichage du secteur
+- Onglet Champs personnalisés : créer/supprimer des champs par domaine
+- Champs custom affichés dynamiquement dans le formulaire stock
+- Sauvegarde des valeurs custom par produit
+- Routes API settings/profile, settings/company, settings/custom-fields
+- Route API stocks/[id]/custom-values
+### Changed
+- Placeholders des champs custom adaptés au domaine connecté
+
 ## [1.9.0] - 2025-05-11
 ### Added
 - Badge domaine coloré dans la sidebar (Automobile, Textile, Alimentaire)
