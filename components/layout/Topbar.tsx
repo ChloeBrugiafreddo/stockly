@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Logo } from '@/components/ui/Logo'
 import { Search, Bell } from 'lucide-react'
+import { NotificationsPanel } from './NotificationsPanel'
 
 export async function Topbar() {
   const session = await auth()
@@ -62,33 +63,7 @@ export async function Topbar() {
         </button>
 
         {/* Notifications */}
-        <button
-          style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '42px',
-            height: '42px',
-            borderRadius: '12px',
-            border: '1px solid var(--card-border)',
-            background: 'transparent',
-            color: 'var(--muted)',
-            cursor: 'pointer',
-          }}
-          aria-label="Notifications"
-        >
-          <Bell size={18} strokeWidth={1.8} />
-          <span style={{
-            position: 'absolute',
-            top: '9px',
-            right: '9px',
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            background: '#3b82f6',
-          }} />
-        </button>
+        <NotificationsPanel />
 
         <ThemeToggle />
 
