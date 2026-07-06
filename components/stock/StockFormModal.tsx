@@ -45,6 +45,8 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
 
   const isEdit = !!item
   const [categories, setCategories] = useState<any[]>([])
+  const [customFields, setCustomFields] = useState<any[]>([])
+  const [customValues, setCustomValues] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -59,12 +61,34 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
   })
 
   useEffect(() => {
+    // Charge les catégories
     fetch('/api/categories')
       .then(r => r.json())
       .then(d => setCategories(d.categories || []))
+
+    // Charge les champs custom de type 'product'
+    fetch('/api/settings/custom-fields')
+      .then(r => r.json())
+      .then(d => {
+        const productFields = (d.fields || []).filter((f: any) => f.entity === 'product')
+        setCustomFields(productFields)
+      })
+
+    // Si on est en édition, charge les valeurs existantes
+    if (isEdit && item._id) {
+      fetch(`/api/stocks/${item._id}/custom-values`)
+        .then(r => r.json())
+        .then(d => {
+          const vals: Record<string, string> = {}
+          ;(d.values || []).forEach((v: any) => {
+            vals[v.customFieldId] = v.value
+          })
+          setCustomValues(vals)
+        })
+    }
   }, [])
 
-  function set(key: string, val: string) {
+  function setField(key: string, val: string) {
     setForm(f => ({ ...f, [key]: val }))
   }
 
@@ -91,8 +115,30 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
     })
 
     const j = await r.json()
+
+    if (!r.ok) {
+      setLoading(false)
+      setError(j.error || 'Erreur')
+      return
+    }
+
+    // Sauvegarde les valeurs des champs custom
+    const productId = isEdit ? item._id : j._id
+    if (customFields.length > 0 && productId) {
+      const values = customFields
+        .filter(f => customValues[f._id] !== undefined && customValues[f._id] !== '')
+        .map(f => ({ customFieldId: f._id, value: customValues[f._id] }))
+
+      if (values.length > 0) {
+        await fetch(`/api/stocks/${productId}/custom-values`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ values }),
+        })
+      }
+    }
+
     setLoading(false)
-    if (!r.ok) { setError(j.error || 'Erreur'); return }
     onSaved()
   }
 
@@ -106,6 +152,52 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
   const labelStyle = {
     display: 'block', fontSize: '13px',
     fontWeight: 500 as const, color: 'var(--muted)', marginBottom: '6px',
+  }
+
+  function renderCustomField(field: any) {
+    const value = customValues[field._id] || ''
+    const onChange = (val: string) => setCustomValues(prev => ({ ...prev, [field._id]: val }))
+
+    switch (field.fieldType) {
+      case 'number':
+        return (
+          <input style={inputStyle} type="number" value={value}
+            onChange={e => onChange(e.target.value)}
+            required={field.isRequired} />
+        )
+      case 'date':
+        return (
+          <input style={inputStyle} type="date" value={value}
+            onChange={e => onChange(e.target.value)}
+            required={field.isRequired} />
+        )
+      case 'boolean':
+        return (
+          <select style={inputStyle} value={value} onChange={e => onChange(e.target.value)}
+            required={field.isRequired}>
+            <option value="">—</option>
+            <option value="true">Oui</option>
+            <option value="false">Non</option>
+          </select>
+        )
+      case 'select':
+        return (
+          <select style={inputStyle} value={value} onChange={e => onChange(e.target.value)}
+            required={field.isRequired}>
+            <option value="">Sélectionner...</option>
+            {field.options?.map((opt: string) => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        )
+      default:
+        return (
+          <input style={inputStyle} type="text" value={value}
+            onChange={e => onChange(e.target.value)}
+            required={field.isRequired}
+            placeholder={`Entrez ${field.fieldLabel.toLowerCase()}`} />
+        )
+    }
   }
 
   return (
@@ -141,50 +233,35 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
 
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={labelStyle}>Nom du produit *</label>
-              <input
-                style={inputStyle}
-                value={form.name}
-                onChange={e => set('name', e.target.value)}
-                required
-                placeholder={config.namePlaceholder}
-              />
+              <input style={inputStyle} value={form.name}
+                onChange={e => setField('name', e.target.value)}
+                required placeholder={config.namePlaceholder} />
             </div>
 
             <div>
               <label style={labelStyle}>SKU (référence) *</label>
-              <input
-                style={inputStyle}
-                value={form.sku}
-                onChange={e => set('sku', e.target.value)}
-                required
-                placeholder={config.skuPlaceholder}
-                disabled={isEdit}
-              />
+              <input style={inputStyle} value={form.sku}
+                onChange={e => setField('sku', e.target.value)}
+                required placeholder={config.skuPlaceholder} disabled={isEdit} />
             </div>
 
             <div>
               <label style={labelStyle}>Prix unitaire (€)</label>
-              <input
-                style={inputStyle}
-                type="number" min="0" step="0.01"
-                value={form.price}
-                onChange={e => set('price', e.target.value)}
-              />
+              <input style={inputStyle} type="number" min="0" step="0.01"
+                value={form.price} onChange={e => setField('price', e.target.value)} />
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={labelStyle}>Description</label>
-              <input
-                style={inputStyle}
-                value={form.description}
-                onChange={e => set('description', e.target.value)}
-                placeholder={config.descPlaceholder}
-              />
+              <input style={inputStyle} value={form.description}
+                onChange={e => setField('description', e.target.value)}
+                placeholder={config.descPlaceholder} />
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={labelStyle}>Catégorie</label>
-              <select style={inputStyle} value={form.categoryId} onChange={e => set('categoryId', e.target.value)}>
+              <select style={inputStyle} value={form.categoryId}
+                onChange={e => setField('categoryId', e.target.value)}>
                 <option value="">Sans catégorie</option>
                 {categories.map(c => (
                   <option key={c._id} value={c._id}>{c.name}</option>
@@ -195,24 +272,40 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
             {!isEdit && (
               <div>
                 <label style={labelStyle}>Quantité initiale</label>
-                <input
-                  style={inputStyle}
-                  type="number" min="0"
-                  value={form.quantity}
-                  onChange={e => set('quantity', e.target.value)}
-                />
+                <input style={inputStyle} type="number" min="0"
+                  value={form.quantity} onChange={e => setField('quantity', e.target.value)} />
               </div>
             )}
 
             <div>
               <label style={labelStyle}>Seuil d'alerte</label>
-              <input
-                style={inputStyle}
-                type="number" min="0"
-                value={form.minimumStock}
-                onChange={e => set('minimumStock', e.target.value)}
-              />
+              <input style={inputStyle} type="number" min="0"
+                value={form.minimumStock} onChange={e => setField('minimumStock', e.target.value)} />
             </div>
+
+            {/* Champs personnalisés */}
+            {customFields.length > 0 && (
+              <div style={{
+                gridColumn: '1 / -1',
+                borderTop: '1px solid var(--card-border)',
+                paddingTop: '16px', marginTop: '4px',
+              }}>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--muted)', marginBottom: '14px' }}>
+                  Champs spécifiques {domain}
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  {customFields.map(field => (
+                    <div key={field._id} style={{ gridColumn: field.fieldType === 'text' && field.fieldLabel.length > 20 ? '1 / -1' : undefined }}>
+                      <label style={labelStyle}>
+                        {field.fieldLabel}
+                        {field.isRequired && <span style={{ color: '#dc2626' }}> *</span>}
+                      </label>
+                      {renderCustomField(field)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
           </div>
 
