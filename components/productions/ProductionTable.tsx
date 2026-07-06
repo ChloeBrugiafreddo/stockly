@@ -1,7 +1,7 @@
 'use client'
 
 import { Production } from './ProductionsClient'
-import { Eye, Trash2, CheckCircle, Archive } from 'lucide-react'
+import { Eye, Trash2, CheckCircle, Archive, IdCard } from 'lucide-react'
 
 const statusStyles: Record<string, { bg: string; color: string; label: string }> = {
   EN_COURS: { bg: '#eff6ff', color: '#1d4ed8', label: '🔵 En cours' },
@@ -15,9 +15,10 @@ interface Props {
   onDetail: (item: Production) => void
   onDelete: (id: string) => void
   onChangeStatus: (id: string, status: string) => void
+  onIdentity: (item: Production) => void
 }
 
-export function ProductionTable({ items, loading, onDetail, onDelete, onChangeStatus }: Props) {
+export function ProductionTable({ items, loading, onDetail, onDelete, onChangeStatus, onIdentity }: Props) {
   if (loading) return (
     <div style={{ textAlign: 'center', padding: '48px', color: 'var(--muted)' }}>Chargement…</div>
   )
@@ -102,6 +103,18 @@ export function ProductionTable({ items, loading, onDetail, onDelete, onChangeSt
                         }}
                       >
                         <Eye size={14} />
+                      </button>
+                      <button
+                        onClick={() => onIdentity(item)}
+                        title="Carte d'identité de la production"
+                        style={{
+                          width: '30px', height: '30px', borderRadius: '8px',
+                          border: '1px solid #e9d5ff', background: '#f5f3ff',
+                          color: '#7c3aed', cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                      >
+                        <IdCard size={14} />
                       </button>
                       {item.status === 'EN_COURS' && (
                         <button

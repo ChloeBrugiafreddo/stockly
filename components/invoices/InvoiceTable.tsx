@@ -1,14 +1,14 @@
 'use client'
 
-import { Invoice } from './InvoicesClient'
+import { Invoice, toTTC } from './InvoicesClient'
 import { Eye, Trash2, Send, CheckCircle, XCircle } from 'lucide-react'
 
 const statusStyles: Record<string, { bg: string; color: string; label: string }> = {
   DRAFT:     { bg: '#f1f5f9', color: '#64748b', label: '📝 Brouillon' },
-  SENT:      { bg: '#eff6ff', color: '#1d4ed8', label: '📤 Envoyée' },
-  PAID:      { bg: '#f0fdf4', color: '#16a34a', label: '✅ Payée' },
-  OVERDUE:   { bg: '#fffbeb', color: '#d97706', label: '⚠️ En retard' },
-  CANCELLED: { bg: '#fef2f2', color: '#dc2626', label: '❌ Annulée' },
+  SENT:      { bg: '#eff6ff', color: '#1d4ed8', label: '📤 Envoyé' },
+  PAID:      { bg: '#f0fdf4', color: '#16a34a', label: '✅ Accepté' },
+  OVERDUE:   { bg: '#fffbeb', color: '#d97706', label: '⚠️ Expiré' },
+  CANCELLED: { bg: '#fef2f2', color: '#dc2626', label: '❌ Annulé' },
 }
 
 interface Props {
@@ -30,7 +30,7 @@ export function InvoiceTable({ items, loading, onDetail, onChangeStatus, onDelet
       background: 'var(--card-bg)', borderRadius: '14px',
       border: '1px solid var(--card-border)',
     }}>
-      Aucune facture — créez la première.
+      Aucun devis — créez le premier.
     </div>
   )
 
@@ -43,7 +43,7 @@ export function InvoiceTable({ items, loading, onDetail, onChangeStatus, onDelet
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--card-border)' }}>
-              {['Statut', 'Numéro', 'Client', 'Montant HT', 'TVA', 'Total TTC', 'Échéance', 'Actions'].map(h => (
+              {['Statut', 'Numéro', 'Client', 'Total HT', 'TVA 20%', 'Total TTC', 'Échéance', 'Actions'].map(h => (
                 <th key={h} style={{
                   padding: '12px 16px', textAlign: 'left',
                   fontSize: '12px', fontWeight: 600, color: 'var(--muted)', whiteSpace: 'nowrap',
@@ -56,6 +56,8 @@ export function InvoiceTable({ items, loading, onDetail, onChangeStatus, onDelet
           <tbody>
             {items.map((item, i) => {
               const st = statusStyles[item.status]
+              const tva = item.amount * 0.20
+              const ttc = toTTC(item.amount)
               return (
                 <tr key={item._id} style={{
                   borderBottom: i < items.length - 1 ? '1px solid var(--card-border)' : 'none',
@@ -84,10 +86,10 @@ export function InvoiceTable({ items, loading, onDetail, onChangeStatus, onDelet
                     {item.amount.toFixed(2)} €
                   </td>
                   <td style={{ padding: '12px 16px', color: 'var(--muted)' }}>
-                    {item.taxAmount.toFixed(2)} €
+                    {tva.toFixed(2)} €
                   </td>
                   <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--foreground)' }}>
-                    {(item.amount + item.taxAmount).toFixed(2)} €
+                    {ttc.toFixed(2)} €
                   </td>
                   <td style={{ padding: '12px 16px', color: item.status === 'OVERDUE' ? '#d97706' : 'var(--muted)', fontSize: '13px' }}>
                     {item.dueDate ? new Date(item.dueDate).toLocaleDateString('fr-FR') : '—'}
@@ -104,7 +106,7 @@ export function InvoiceTable({ items, loading, onDetail, onChangeStatus, onDelet
                       </button>
                       {item.status === 'DRAFT' && (
                         <>
-                          <button onClick={() => onChangeStatus(item._id, 'SENT')} title="Marquer comme envoyée" style={{
+                          <button onClick={() => onChangeStatus(item._id, 'SENT')} title="Marquer comme envoyé" style={{
                             width: '30px', height: '30px', borderRadius: '8px',
                             border: '1px solid #bfdbfe', background: '#eff6ff',
                             color: '#1d4ed8', cursor: 'pointer',
@@ -124,7 +126,7 @@ export function InvoiceTable({ items, loading, onDetail, onChangeStatus, onDelet
                       )}
                       {item.status === 'SENT' && (
                         <>
-                          <button onClick={() => onChangeStatus(item._id, 'PAID')} title="Marquer comme payée" style={{
+                          <button onClick={() => onChangeStatus(item._id, 'PAID')} title="Marquer comme accepté" style={{
                             width: '30px', height: '30px', borderRadius: '8px',
                             border: '1px solid #bbf7d0', background: '#f0fdf4',
                             color: '#16a34a', cursor: 'pointer',
