@@ -16,9 +16,10 @@ interface EntityPageProps {
   apiPath: string
   fields: Field[]
   columns: { key: string; label: string }[]
+  onRowClick?: (item: any) => void
 }
 
-export function EntityPage({ title, apiPath, fields, columns }: EntityPageProps) {
+export function EntityPage({ title, apiPath, fields, columns, onRowClick }: EntityPageProps) {
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
@@ -49,14 +50,16 @@ export function EntityPage({ title, apiPath, fields, columns }: EntityPageProps)
     setFormOpen(true)
   }
 
-  function openEdit(item: any) {
+  function openEdit(item: any, e: React.MouseEvent) {
+    e.stopPropagation() // empêche le onRowClick de se déclencher
     setEditItem(item)
     setForm({ ...item })
     setError('')
     setFormOpen(true)
   }
 
-  async function handleDelete(id: string) {
+  async function handleDelete(id: string, e: React.MouseEvent) {
+    e.stopPropagation() // empêche le onRowClick de se déclencher
     if (!confirm('Supprimer cet élément ?')) return
     await fetch(`${apiPath}/${id}`, { method: 'DELETE' })
     load()
@@ -106,6 +109,11 @@ export function EntityPage({ title, apiPath, fields, columns }: EntityPageProps)
           </h1>
           <p style={{ fontSize: '14px', color: 'var(--muted)' }}>
             {items.length} élément{items.length > 1 ? 's' : ''}
+            {onRowClick && (
+              <span style={{ marginLeft: '8px', fontSize: '12px', color: 'var(--muted)' }}>
+                — Cliquez sur une ligne pour voir l'historique
+              </span>
+            )}
           </p>
         </div>
         <button
@@ -132,7 +140,7 @@ export function EntityPage({ title, apiPath, fields, columns }: EntityPageProps)
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder={`Rechercher un ${title.toLowerCase().slice(0, -1)}…`}
+            placeholder={`Rechercher…`}
             style={{
               width: '100%', padding: '9px 12px 9px 36px',
               borderRadius: '10px', border: '1px solid var(--card-border)',
@@ -178,16 +186,31 @@ export function EntityPage({ title, apiPath, fields, columns }: EntityPageProps)
                       {col.label}
                     </th>
                   ))}
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'var(--muted)' }}>
+                  <th style={{
+                    padding: '12px 16px', textAlign: 'left',
+                    fontSize: '12px', fontWeight: 600, color: 'var(--muted)',
+                  }}>
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((item, i) => (
-                  <tr key={item._id} style={{
-                    borderBottom: i < items.length - 1 ? '1px solid var(--card-border)' : 'none',
-                  }}>
+                  <tr
+                    key={item._id}
+                    onClick={() => onRowClick?.(item)}
+                    style={{
+                      borderBottom: i < items.length - 1 ? '1px solid var(--card-border)' : 'none',
+                      cursor: onRowClick ? 'pointer' : 'default',
+                      transition: 'background 0.1s',
+                    }}
+                    onMouseEnter={e => {
+                      if (onRowClick) (e.currentTarget as HTMLTableRowElement).style.background = 'var(--card-bg)'
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'
+                    }}
+                  >
                     {columns.map(col => (
                       <td key={col.key} style={{ padding: '12px 16px', color: 'var(--foreground)' }}>
                         {item[col.key] || '—'}
@@ -196,7 +219,7 @@ export function EntityPage({ title, apiPath, fields, columns }: EntityPageProps)
                     <td style={{ padding: '12px 16px' }}>
                       <div style={{ display: 'flex', gap: '6px' }}>
                         <button
-                          onClick={() => openEdit(item)}
+                          onClick={e => openEdit(item, e)}
                           style={{
                             width: '30px', height: '30px', borderRadius: '8px',
                             border: '1px solid var(--card-border)', background: 'transparent',
@@ -207,7 +230,7 @@ export function EntityPage({ title, apiPath, fields, columns }: EntityPageProps)
                           <Pencil size={14} />
                         </button>
                         <button
-                          onClick={() => handleDelete(item._id)}
+                          onClick={e => handleDelete(item._id, e)}
                           style={{
                             width: '30px', height: '30px', borderRadius: '8px',
                             border: '1px solid #fecaca', background: 'transparent',
@@ -247,7 +270,7 @@ export function EntityPage({ title, apiPath, fields, columns }: EntityPageProps)
             onClick={e => e.stopPropagation()}
           >
             <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '20px' }}>
-              {editItem ? `Modifier` : `Ajouter`}
+              {editItem ? 'Modifier' : 'Ajouter'}
             </h2>
 
             <form onSubmit={handleSubmit}>
