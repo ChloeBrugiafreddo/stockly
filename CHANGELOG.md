@@ -13,6 +13,23 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.8.0] - 2025-05-11
+### Added
+- Page Factures complète avec CRUD, filtres et stats rapides
+- Création de facture avec sélecteur de client existant
+- Liaison facture ↔ production avec import automatique des composants
+- Calcul automatique HT / TVA / TTC
+- Export PDF de chaque facture
+- Changement de statut : DRAFT → SENT → PAID / CANCELLED
+- Route API GET/POST /api/invoices
+- Route API PUT/DELETE /api/invoices/[id]
+- Route API GET /api/productions/[id]/invoice-data
+- Historique client : modale avec toutes ses factures et stats
+- Route API GET /api/customers/[id]/history
+- EntityPage : lignes cliquables avec onRowClick
+### Changed
+- Invoice model : ajout customerId et productionId
+
 ## [1.7.0] - 2025-05-11
 ### Added
 - Module Productions/Assemblages complet
