@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import { StockItem } from './StockPageClient'
+import { useSession } from 'next-auth/react'
 
 interface Props {
   item: StockItem | null
@@ -10,7 +11,38 @@ interface Props {
   onSaved: () => void
 }
 
+const domainConfig: Record<string, {
+  namePlaceholder: string
+  skuPlaceholder: string
+  descPlaceholder: string
+}> = {
+  'Automobile': {
+    namePlaceholder: 'ex: Filtre à huile, Plaquettes de frein...',
+    skuPlaceholder: 'ex: FH-001, PF-AVANT-002...',
+    descPlaceholder: 'ex: Compatible BMW Série 3, 2015-2020',
+  },
+  'Textile': {
+    namePlaceholder: 'ex: Tissu coton blanc, Fil à coudre noir...',
+    skuPlaceholder: 'ex: TC-BL-001, FAC-N-002...',
+    descPlaceholder: 'ex: 100% coton, largeur 150cm, collection été',
+  },
+  'Alimentaire': {
+    namePlaceholder: 'ex: Couteau de chef, Four à convection...',
+    skuPlaceholder: 'ex: CC-001, FAC-001...',
+    descPlaceholder: 'ex: Acier inoxydable 20cm, usage professionnel',
+  },
+  'default': {
+    namePlaceholder: 'ex: Nom du produit',
+    skuPlaceholder: 'ex: REF-001',
+    descPlaceholder: 'Description optionnelle',
+  },
+}
+
 export function StockFormModal({ item, onClose, onSaved }: Props) {
+  const { data: session } = useSession()
+  const domain = (session?.user as any)?.domain || 'default'
+  const config = domainConfig[domain] || domainConfig['default']
+
   const isEdit = !!item
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -60,28 +92,20 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
 
     const j = await r.json()
     setLoading(false)
-
     if (!r.ok) { setError(j.error || 'Erreur'); return }
     onSaved()
   }
 
   const inputStyle = {
-    width: '100%',
-    padding: '9px 12px',
-    borderRadius: '8px',
+    width: '100%', padding: '9px 12px', borderRadius: '8px',
     border: '1px solid var(--card-border)',
-    background: 'var(--background)',
-    color: 'var(--foreground)',
-    fontSize: '14px',
-    outline: 'none',
+    background: 'var(--background)', color: 'var(--foreground)',
+    fontSize: '14px', outline: 'none',
   }
 
   const labelStyle = {
-    display: 'block',
-    fontSize: '13px',
-    fontWeight: 500,
-    color: 'var(--muted)',
-    marginBottom: '6px',
+    display: 'block', fontSize: '13px',
+    fontWeight: 500 as const, color: 'var(--muted)', marginBottom: '6px',
   }
 
   return (
@@ -95,8 +119,7 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
     >
       <div
         style={{
-          background: 'var(--background)',
-          borderRadius: '16px',
+          background: 'var(--background)', borderRadius: '16px',
           border: '1px solid var(--card-border)',
           width: '100%', maxWidth: '520px',
           maxHeight: '90vh', overflowY: 'auto',
@@ -104,7 +127,6 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
         }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--foreground)' }}>
             {isEdit ? 'Modifier le produit' : 'Ajouter un produit'}
@@ -119,22 +141,45 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
 
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={labelStyle}>Nom du produit *</label>
-              <input style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} required placeholder="ex: Filtre à huile" />
+              <input
+                style={inputStyle}
+                value={form.name}
+                onChange={e => set('name', e.target.value)}
+                required
+                placeholder={config.namePlaceholder}
+              />
             </div>
 
             <div>
               <label style={labelStyle}>SKU (référence) *</label>
-              <input style={inputStyle} value={form.sku} onChange={e => set('sku', e.target.value)} required placeholder="ex: FH-001" disabled={isEdit} />
+              <input
+                style={inputStyle}
+                value={form.sku}
+                onChange={e => set('sku', e.target.value)}
+                required
+                placeholder={config.skuPlaceholder}
+                disabled={isEdit}
+              />
             </div>
 
             <div>
               <label style={labelStyle}>Prix unitaire (€)</label>
-              <input style={inputStyle} type="number" min="0" step="0.01" value={form.price} onChange={e => set('price', e.target.value)} />
+              <input
+                style={inputStyle}
+                type="number" min="0" step="0.01"
+                value={form.price}
+                onChange={e => set('price', e.target.value)}
+              />
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={labelStyle}>Description</label>
-              <input style={inputStyle} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Description optionnelle" />
+              <input
+                style={inputStyle}
+                value={form.description}
+                onChange={e => set('description', e.target.value)}
+                placeholder={config.descPlaceholder}
+              />
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>
@@ -150,13 +195,23 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
             {!isEdit && (
               <div>
                 <label style={labelStyle}>Quantité initiale</label>
-                <input style={inputStyle} type="number" min="0" value={form.quantity} onChange={e => set('quantity', e.target.value)} />
+                <input
+                  style={inputStyle}
+                  type="number" min="0"
+                  value={form.quantity}
+                  onChange={e => set('quantity', e.target.value)}
+                />
               </div>
             )}
 
             <div>
               <label style={labelStyle}>Seuil d'alerte</label>
-              <input style={inputStyle} type="number" min="0" value={form.minimumStock} onChange={e => set('minimumStock', e.target.value)} />
+              <input
+                style={inputStyle}
+                type="number" min="0"
+                value={form.minimumStock}
+                onChange={e => set('minimumStock', e.target.value)}
+              />
             </div>
 
           </div>
@@ -166,29 +221,20 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
           )}
 
           <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
-            <button
-              type="button"
-              onClick={onClose}
-              style={{
-                padding: '10px 20px', borderRadius: '10px',
-                border: '1px solid var(--card-border)',
-                background: 'transparent', color: 'var(--foreground)',
-                fontSize: '14px', cursor: 'pointer',
-              }}
-            >
+            <button type="button" onClick={onClose} style={{
+              padding: '10px 20px', borderRadius: '10px',
+              border: '1px solid var(--card-border)',
+              background: 'transparent', color: 'var(--foreground)',
+              fontSize: '14px', cursor: 'pointer',
+            }}>
               Annuler
             </button>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                padding: '10px 20px', borderRadius: '10px',
-                background: '#3b82f6', color: 'white',
-                border: 'none', fontSize: '14px',
-                fontWeight: 600, cursor: 'pointer',
-                opacity: loading ? 0.6 : 1,
-              }}
-            >
+            <button type="submit" disabled={loading} style={{
+              padding: '10px 20px', borderRadius: '10px',
+              background: '#3b82f6', color: 'white', border: 'none',
+              fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              opacity: loading ? 0.6 : 1,
+            }}>
               {loading ? 'Enregistrement…' : isEdit ? 'Modifier' : 'Créer'}
             </button>
           </div>

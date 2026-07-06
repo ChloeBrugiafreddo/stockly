@@ -5,7 +5,7 @@ import {
   Package, Users, Truck, AlertTriangle,
   ArrowUpCircle, ArrowDownCircle, TrendingUp
 } from 'lucide-react'
-
+import { AlertsPanel } from './AlertsPanel'
 interface Stats {
   totalProducts: number
   ruptures: number
@@ -108,6 +108,7 @@ export function DashboardClient() {
           Voici un aperçu de votre activité
         </p>
       </div>
+      <AlertsPanel />
 
       {/* Alertes */}
       {stats && (stats.ruptures > 0 || stats.stockBas > 0) && (
