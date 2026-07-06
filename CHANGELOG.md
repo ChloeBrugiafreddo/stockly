@@ -13,6 +13,18 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.13.0] - 2025-05-11
+### Added
+- Wizard onboarding 4 étapes pour les nouveaux utilisateurs
+- Barre de progression et navigation entre étapes
+- Détection automatique des étapes déjà complétées
+- Bouton "Passer" et "Commencer" une fois tout fait
+- Cloche de notifications cliquable avec panel dropdown
+- Alertes actives dans le panel avec navigation directe
+- Bouton "Revoir le guide de démarrage" dans le panel
+- Route API GET/POST /api/onboarding
+- Route API POST /api/onboarding/reset
+
 ## [1.12.0] - 2025-05-11
 ### Added
 - Carte d'identité des productions avec 4 onglets
@@ -25,7 +37,7 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Renommage Factures → Devis dans toute l'interface
 - Suppression taxAmount du modèle Invoice — TVA calculée à l'affichage
 - Calculs cohérents HT/TVA/TTC partout (TVA = 20% systématique)
-- Marge calculée HT vs HT (CA devis HT - coût
+- Marge calculée HT vs HT (CA devis HT - coût)
 
 ## [1.11.0] - 2025-05-11
 ### Added

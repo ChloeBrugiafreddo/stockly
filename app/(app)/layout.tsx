@@ -3,12 +3,9 @@ import { redirect } from 'next/navigation'
 import { Topbar } from '@/components/layout/Topbar'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { BottomNav } from '@/components/layout/BottomNav'
+import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard'
 
-export default async function AppLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
   if (!session) redirect('/login')
 
@@ -18,16 +15,15 @@ export default async function AppLayout({
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar />
         <main style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '32px',
-          paddingBottom: '80px',
+          flex: 1, overflowY: 'auto',
+          padding: '32px', paddingBottom: '80px',
           background: 'var(--background)',
         }}>
           {children}
         </main>
       </div>
       <BottomNav />
+      <OnboardingWizard />
     </div>
   )
 }
