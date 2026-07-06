@@ -13,6 +13,22 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.7.0] - 2025-05-11
+### Added
+- Module Productions/Assemblages complet
+- Création de productions avec référence, nom, description et statut
+- Ajout de composants depuis le stock avec décrément automatique
+- Retrait de composants avec remise en stock automatique
+- Historique des mouvements lié à la production (traçabilité complète)
+- Changement de statut : EN_COURS → TERMINE → ARCHIVE
+- Route API GET/POST /api/productions
+- Route API PUT/DELETE /api/productions/[id]
+- Route API POST /api/productions/[id]/components
+- Route API DELETE /api/productions/[id]/components/[componentId]
+### Fixed
+- Dashboard : mouvements et stats filtrés par companyId (isolation des données)
+- StockMovement : ajout de 'production' dans les valeurs de referenceType
+
 ## [1.6.0] - 2025-05-11
 ### Added
 - Dashboard avec vraies statistiques (produits, ruptures, stock bas, clients, fournisseurs)

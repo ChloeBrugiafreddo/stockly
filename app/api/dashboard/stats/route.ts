@@ -15,20 +15,22 @@ export async function GET() {
     const companyId = (session.user as any).companyId
     await connectDB()
 
-    // Total produits
-    const totalProducts = await Product.countDocuments({ companyId })
+    // 1. Produits de cette company
+    const products = await Product.find({ companyId }).lean()
+    const productIds = products.map((p: any) => p._id)
 
-    // Stock par état
-    const allStocks = await Stock.find().lean()
+    // 2. Total produits
+    const totalProducts = products.length
+
+    // 3. Stock par état — filtré par les produits de la company
+    const allStocks = await Stock.find({ productId: { $in: productIds } }).lean()
     const stockMap = new Map()
     allStocks.forEach((s: any) => {
       stockMap.set(s.productId.toString(), s)
     })
 
-    const products = await Product.find({ companyId }).lean()
     let ruptures = 0
     let stockBas = 0
-
     products.forEach((p: any) => {
       const stock = stockMap.get(p._id.toString())
       if (!stock) return
@@ -36,20 +38,19 @@ export async function GET() {
       else if (stock.minimumStock > 0 && stock.quantity <= stock.minimumStock) stockBas++
     })
 
-    // Clients et fournisseurs
+    // 4. Clients et fournisseurs de cette company
     const totalCustomers = await Customer.countDocuments({ companyId })
     const totalSuppliers = await Supplier.countDocuments({ companyId })
 
-    // Mouvements récents (10 derniers)
-    const recentMovements = await StockMovement.find()
+    // 5. Mouvements récents — uniquement les produits de cette company
+    const recentMovements = await StockMovement.find({ productId: { $in: productIds } })
       .sort({ createdAt: -1 })
       .limit(10)
       .lean()
 
-    // Enrichit les mouvements avec le nom du produit
     const movementsWithProduct = await Promise.all(
       recentMovements.map(async (m: any) => {
-        const product = await Product.findById(m.productId).lean() as any
+        const product = products.find((p: any) => p._id.toString() === m.productId.toString()) as any
         return {
           ...m,
           productName: product?.name || 'Produit supprimé',
@@ -57,30 +58,6 @@ export async function GET() {
         }
       })
     )
-
-    // Mouvements par jour sur 7 jours
-    const sevenDaysAgo = new Date()
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
-    const weeklyMovements = await StockMovement.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: sevenDaysAgo }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            day: { $dayOfMonth: '$createdAt' },
-            month: { $month: '$createdAt' },
-            type: '$movementType'
-          },
-          count: { $sum: 1 },
-          totalQty: { $sum: '$quantity' }
-        }
-      },
-      { $sort: { '_id.month': 1, '_id.day': 1 } }
-    ])
 
     return NextResponse.json({
       stats: {
@@ -91,7 +68,6 @@ export async function GET() {
         totalSuppliers,
       },
       recentMovements: movementsWithProduct,
-      weeklyMovements,
     })
   } catch (e: any) {
     console.error('Dashboard error:', e.message)
