@@ -18,14 +18,18 @@ export interface Invoice {
   customerName: string
   customerEmail?: string
   items: InvoiceItem[]
-  amount: number
-  taxAmount: number
+  amount: number  // toujours HT
   status: 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED'
   dueDate?: string
   paidAt?: string
   notes?: string
   createdAt: string
 }
+
+// Helper TVA — utilisé partout de façon cohérente
+export const TVA_RATE = 0.20
+export const toTTC = (ht: number) => ht * (1 + TVA_RATE)
+export const tvaAmount = (ht: number) => ht * TVA_RATE
 
 export function InvoicesClient() {
   const [items, setItems] = useState<Invoice[]>([])
@@ -62,15 +66,15 @@ export function InvoicesClient() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Supprimer ce brouillon ?')) return
+    if (!confirm('Supprimer ce devis ?')) return
     await fetch(`/api/invoices/${id}`, { method: 'DELETE' })
     load()
   }
 
-  // Totaux
   const totalHT = items.reduce((sum, i) => sum + i.amount, 0)
-  const totalTTC = items.reduce((sum, i) => sum + i.amount + i.taxAmount, 0)
+  const totalTTC = toTTC(totalHT)
   const enAttente = items.filter(i => i.status === 'SENT' || i.status === 'OVERDUE').length
+  const acceptes = items.filter(i => i.status === 'PAID').length
 
   return (
     <div style={{ maxWidth: '1200px' }}>
@@ -79,11 +83,11 @@ export function InvoicesClient() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
           <h1 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '4px' }}>
-            Factures
+            Devis
           </h1>
           <p style={{ fontSize: '14px', color: 'var(--muted)' }}>
-            {items.length} facture{items.length > 1 ? 's' : ''}
-            {enAttente > 0 && ` — ${enAttente} en attente de paiement`}
+            {items.length} devis
+            {enAttente > 0 && ` — ${enAttente} en attente de réponse`}
           </p>
         </div>
         <button
@@ -96,17 +100,17 @@ export function InvoicesClient() {
           }}
         >
           <Plus size={16} />
-          Nouvelle facture
+          Nouveau devis
         </button>
       </div>
 
-      {/* Stats rapides */}
+      {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '24px' }}>
         {[
           { label: 'Total HT', value: `${totalHT.toFixed(2)} €`, color: '#3b82f6' },
           { label: 'Total TTC', value: `${totalTTC.toFixed(2)} €`, color: '#7c3aed' },
           { label: 'En attente', value: enAttente.toString(), color: '#d97706' },
-          { label: 'Payées', value: items.filter(i => i.status === 'PAID').length.toString(), color: '#16a34a' },
+          { label: 'Acceptés', value: acceptes.toString(), color: '#16a34a' },
         ].map(stat => (
           <div key={stat.label} style={{
             background: 'var(--card-bg)', border: '1px solid var(--card-border)',
@@ -150,10 +154,10 @@ export function InvoicesClient() {
         >
           <option value="">Tous les statuts</option>
           <option value="DRAFT">📝 Brouillon</option>
-          <option value="SENT">📤 Envoyée</option>
-          <option value="PAID">✅ Payée</option>
-          <option value="OVERDUE">⚠️ En retard</option>
-          <option value="CANCELLED">❌ Annulée</option>
+          <option value="SENT">📤 Envoyé</option>
+          <option value="PAID">✅ Accepté</option>
+          <option value="OVERDUE">⚠️ Expiré</option>
+          <option value="CANCELLED">❌ Annulé</option>
         </select>
 
         {(search || filterStatus) && (
@@ -180,7 +184,6 @@ export function InvoicesClient() {
         </button>
       </div>
 
-      {/* Tableau */}
       <InvoiceTable
         items={items}
         loading={loading}

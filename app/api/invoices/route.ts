@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
 import Invoice from '@/models/Invoice'
-import Production from '@/models/Production'
-import Product from '@/models/Product'
 
 export async function GET(req: Request) {
   try {
@@ -49,10 +47,10 @@ export async function POST(req: Request) {
     const count = await Invoice.countDocuments({ companyId })
     const invoiceNumber = `STK-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}`
 
+    // On stocke uniquement le HT
     const amount = items.reduce((sum: number, item: any) => {
       return sum + (Number(item.quantity) * Number(item.unitPrice))
     }, 0)
-    const taxAmount = amount * 0.20
 
     const invoice = await Invoice.create({
       companyId,
@@ -64,7 +62,6 @@ export async function POST(req: Request) {
       customerEmail,
       items,
       amount,
-      taxAmount,
       status: 'DRAFT',
       dueDate: dueDate ? new Date(dueDate) : null,
       notes,
@@ -72,7 +69,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(invoice, { status: 201 })
   } catch (e: any) {
-    if (e.code === 11000) return NextResponse.json({ error: 'Numéro de facture déjà existant' }, { status: 409 })
+    if (e.code === 11000) return NextResponse.json({ error: 'Numéro déjà existant' }, { status: 409 })
     return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }

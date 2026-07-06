@@ -13,6 +13,20 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.12.0] - 2025-05-11
+### Added
+- Carte d'identité des productions avec 4 onglets
+- Vue d'ensemble : coût composants, CA HT, marge brute HT
+- Composants : tableau détaillé avec prix unitaire et total par pièce
+- Devis liés : liste avec statuts et totaux
+- Mouvements : historique des entrées/sorties liées à la production
+- Route API GET /api/productions/[id]/identity
+### Changed
+- Renommage Factures → Devis dans toute l'interface
+- Suppression taxAmount du modèle Invoice — TVA calculée à l'affichage
+- Calculs cohérents HT/TVA/TTC partout (TVA = 20% systématique)
+- Marge calculée HT vs HT (CA devis HT - coût
+
 ## [1.11.0] - 2025-05-11
 ### Added
 - Carte d'identité produit : vue complète avec 4 onglets

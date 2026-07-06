@@ -5,6 +5,7 @@ import { Plus, Search, RefreshCw } from 'lucide-react'
 import { ProductionTable } from './ProductionTable'
 import { ProductionFormModal } from './ProductionFormModal'
 import { ProductionDetailModal } from './ProductionDetailModal'
+import { ProductionIdentityModal } from './ProductionIdentityModal'
 
 export interface Component {
   _id: string
@@ -34,6 +35,7 @@ export function ProductionsClient() {
   const [filterStatus, setFilterStatus] = useState('')
   const [formOpen, setFormOpen] = useState(false)
   const [detailItem, setDetailItem] = useState<Production | null>(null)
+  const [identityItem, setIdentityItem] = useState<Production | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -164,6 +166,7 @@ export function ProductionsClient() {
         onDetail={item => setDetailItem(item)}
         onDelete={handleDelete}
         onChangeStatus={handleChangeStatus}
+        onIdentity={item => setIdentityItem(item)}
       />
 
       {/* Modal création */}
@@ -179,6 +182,14 @@ export function ProductionsClient() {
         <ProductionDetailModal
           production={detailItem}
           onClose={() => { setDetailItem(null); load() }}
+        />
+      )}
+
+      {/* Modal carte d'identité */}
+      {identityItem && (
+        <ProductionIdentityModal
+          production={identityItem}
+          onClose={() => setIdentityItem(null)}
         />
       )}
     </div>

@@ -1,7 +1,7 @@
 'use client'
 
-import { X, Send, CheckCircle, XCircle, Download } from 'lucide-react'
-import { Invoice } from './InvoicesClient'
+import { X, Send, CheckCircle, Download } from 'lucide-react'
+import { Invoice, toTTC, tvaAmount } from './InvoicesClient'
 
 interface Props {
   invoice: Invoice
@@ -11,51 +11,53 @@ interface Props {
 
 const statusStyles: Record<string, { bg: string; color: string; label: string }> = {
   DRAFT:     { bg: '#f1f5f9', color: '#64748b', label: '📝 Brouillon' },
-  SENT:      { bg: '#eff6ff', color: '#1d4ed8', label: '📤 Envoyée' },
-  PAID:      { bg: '#f0fdf4', color: '#16a34a', label: '✅ Payée' },
-  OVERDUE:   { bg: '#fffbeb', color: '#d97706', label: '⚠️ En retard' },
-  CANCELLED: { bg: '#fef2f2', color: '#dc2626', label: '❌ Annulée' },
+  SENT:      { bg: '#eff6ff', color: '#1d4ed8', label: '📤 Envoyé' },
+  PAID:      { bg: '#f0fdf4', color: '#16a34a', label: '✅ Accepté' },
+  OVERDUE:   { bg: '#fffbeb', color: '#d97706', label: '⚠️ Expiré' },
+  CANCELLED: { bg: '#fef2f2', color: '#dc2626', label: '❌ Annulé' },
 }
 
 export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) {
   const st = statusStyles[invoice.status]
-  const totalTTC = invoice.amount + invoice.taxAmount
+  const tva = tvaAmount(invoice.amount)
+  const ttc = toTTC(invoice.amount)
 
   function handleExportPDF() {
-    // Import dynamique pour éviter les erreurs SSR
     import('jspdf').then(({ jsPDF }) => {
       import('jspdf-autotable').then(({ default: autoTable }) => {
         const doc = new jsPDF()
 
         // En-tête
-        doc.setFontSize(20)
+        doc.setFontSize(22)
         doc.setTextColor(30, 64, 175)
         doc.text('STOCKLY', 14, 20)
-
         doc.setFontSize(10)
         doc.setTextColor(100, 116, 139)
         doc.text('ERP de gestion de stock', 14, 27)
 
-        doc.setFontSize(18)
+        doc.setFontSize(16)
         doc.setTextColor(15, 23, 42)
-        doc.text(`FACTURE ${invoice.invoiceNumber}`, 14, 42)
+        doc.text(`DEVIS ${invoice.invoiceNumber}`, 14, 40)
 
-        // Statut
         doc.setFontSize(10)
         doc.setTextColor(100, 116, 139)
-        doc.text(`Statut : ${invoice.status}`, 14, 50)
-        doc.text(`Date : ${new Date(invoice.createdAt).toLocaleDateString('fr-FR')}`, 14, 57)
+        doc.text(`Statut : ${st.label}`, 14, 48)
+        doc.text(`Date : ${new Date(invoice.createdAt).toLocaleDateString('fr-FR')}`, 14, 55)
         if (invoice.dueDate) {
-          doc.text(`Échéance : ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}`, 14, 64)
+          doc.text(`Valable jusqu'au : ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}`, 14, 62)
         }
 
         // Client
-        doc.setFontSize(12)
-        doc.setTextColor(15, 23, 42)
-        doc.text('Facturé à :', 14, 78)
         doc.setFontSize(11)
-        doc.text(invoice.customerName, 14, 85)
-        if (invoice.customerEmail) doc.text(invoice.customerEmail, 14, 91)
+        doc.setTextColor(15, 23, 42)
+        doc.text('Devis établi pour :', 14, 75)
+        doc.setFontSize(12)
+        doc.text(invoice.customerName, 14, 82)
+        if (invoice.customerEmail) {
+          doc.setFontSize(10)
+          doc.setTextColor(100, 116, 139)
+          doc.text(invoice.customerEmail, 14, 88)
+        }
 
         // Tableau des lignes
         const tableData = invoice.items.map(item => [
@@ -66,7 +68,7 @@ export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) 
         ])
 
         autoTable(doc, {
-          startY: 100,
+          startY: 98,
           head: [['Description', 'Qté', 'Prix unit. HT', 'Total HT']],
           body: tableData,
           theme: 'grid',
@@ -76,14 +78,21 @@ export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) 
 
         const finalY = (doc as any).lastAutoTable.finalY + 10
 
-        // Totaux
+        // Totaux HT / TVA / TTC
         doc.setFontSize(10)
         doc.setTextColor(100, 116, 139)
-        doc.text(`Total HT : ${invoice.amount.toFixed(2)} €`, 140, finalY)
-        doc.text(`TVA (20%) : ${invoice.taxAmount.toFixed(2)} €`, 140, finalY + 7)
+        doc.text(`Total HT :`, 130, finalY)
+        doc.setTextColor(15, 23, 42)
+        doc.text(`${invoice.amount.toFixed(2)} €`, 175, finalY, { align: 'right' })
+
+        doc.setTextColor(100, 116, 139)
+        doc.text(`TVA (20%) :`, 130, finalY + 7)
+        doc.text(`${tva.toFixed(2)} €`, 175, finalY + 7, { align: 'right' })
+
         doc.setFontSize(12)
         doc.setTextColor(30, 64, 175)
-        doc.text(`Total TTC : ${totalTTC.toFixed(2)} €`, 140, finalY + 16)
+        doc.text(`Total TTC :`, 130, finalY + 16)
+        doc.text(`${ttc.toFixed(2)} €`, 175, finalY + 16, { align: 'right' })
 
         if (invoice.notes) {
           doc.setFontSize(10)
@@ -150,22 +159,22 @@ export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) 
           <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
             <div>
               <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '2px' }}>Date de création</p>
-              <p style={{ fontSize: '14px', color: 'var(--foreground)', fontWeight: 500 }}>
+              <p style={{ fontSize: '14px', fontWeight: 500 }}>
                 {new Date(invoice.createdAt).toLocaleDateString('fr-FR')}
               </p>
             </div>
             {invoice.dueDate && (
               <div>
-                <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '2px' }}>Date d'échéance</p>
-                <p style={{ fontSize: '14px', color: invoice.status === 'OVERDUE' ? '#d97706' : 'var(--foreground)', fontWeight: 500 }}>
+                <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '2px' }}>Valable jusqu'au</p>
+                <p style={{ fontSize: '14px', fontWeight: 500, color: invoice.status === 'OVERDUE' ? '#d97706' : 'var(--foreground)' }}>
                   {new Date(invoice.dueDate).toLocaleDateString('fr-FR')}
                 </p>
               </div>
             )}
             {invoice.paidAt && (
               <div>
-                <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '2px' }}>Payée le</p>
-                <p style={{ fontSize: '14px', color: '#16a34a', fontWeight: 500 }}>
+                <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '2px' }}>Accepté le</p>
+                <p style={{ fontSize: '14px', fontWeight: 500, color: '#16a34a' }}>
                   {new Date(invoice.paidAt).toLocaleDateString('fr-FR')}
                 </p>
               </div>
@@ -188,10 +197,10 @@ export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) 
               <tbody>
                 {invoice.items.map((item, i) => (
                   <tr key={i} style={{ borderBottom: i < invoice.items.length - 1 ? '1px solid var(--card-border)' : 'none' }}>
-                    <td style={{ padding: '10px 14px', color: 'var(--foreground)', fontWeight: 500 }}>{item.description}</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 500, color: 'var(--foreground)' }}>{item.description}</td>
                     <td style={{ padding: '10px 14px', color: 'var(--muted)' }}>{item.quantity}</td>
                     <td style={{ padding: '10px 14px', color: 'var(--muted)' }}>{item.unitPrice.toFixed(2)} €</td>
-                    <td style={{ padding: '10px 14px', color: 'var(--foreground)', fontWeight: 600 }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 600, color: 'var(--foreground)' }}>
                       {(item.quantity * item.unitPrice).toFixed(2)} €
                     </td>
                   </tr>
@@ -200,25 +209,31 @@ export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) 
             </table>
           </div>
 
-          {/* Totaux */}
+          {/* Totaux HT / TVA / TTC */}
           <div style={{
             background: 'var(--card-bg)', border: '1px solid var(--card-border)',
             borderRadius: '10px', padding: '16px', marginBottom: '20px',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ fontSize: '13px', color: 'var(--muted)' }}>Total HT</span>
-              <span style={{ fontSize: '13px', fontWeight: 600 }}>{invoice.amount.toFixed(2)} €</span>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--foreground)' }}>
+                {invoice.amount.toFixed(2)} €
+              </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
               <span style={{ fontSize: '13px', color: 'var(--muted)' }}>TVA (20%)</span>
-              <span style={{ fontSize: '13px', color: 'var(--muted)' }}>{invoice.taxAmount.toFixed(2)} €</span>
+              <span style={{ fontSize: '13px', color: 'var(--muted)' }}>
+                {tva.toFixed(2)} €
+              </span>
             </div>
             <div style={{
               display: 'flex', justifyContent: 'space-between',
               paddingTop: '10px', borderTop: '1px solid var(--card-border)',
             }}>
-              <span style={{ fontSize: '15px', fontWeight: 700 }}>Total TTC</span>
-              <span style={{ fontSize: '15px', fontWeight: 700, color: '#3b82f6' }}>{totalTTC.toFixed(2)} €</span>
+              <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--foreground)' }}>Total TTC</span>
+              <span style={{ fontSize: '15px', fontWeight: 700, color: '#3b82f6' }}>
+                {ttc.toFixed(2)} €
+              </span>
             </div>
           </div>
 
@@ -245,7 +260,6 @@ export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) 
               <Download size={14} />
               Exporter PDF
             </button>
-
             {invoice.status === 'DRAFT' && (
               <button onClick={() => { onChangeStatus(invoice._id, 'SENT'); onClose() }} style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
@@ -254,10 +268,9 @@ export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) 
                 color: '#1d4ed8', fontSize: '13px', cursor: 'pointer', fontWeight: 500,
               }}>
                 <Send size={14} />
-                Marquer comme envoyée
+                Marquer comme envoyé
               </button>
             )}
-
             {invoice.status === 'SENT' && (
               <button onClick={() => { onChangeStatus(invoice._id, 'PAID'); onClose() }} style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
@@ -266,7 +279,7 @@ export function InvoiceDetailModal({ invoice, onClose, onChangeStatus }: Props) 
                 color: '#16a34a', fontSize: '13px', cursor: 'pointer', fontWeight: 500,
               }}>
                 <CheckCircle size={14} />
-                Marquer comme payée
+                Marquer comme accepté
               </button>
             )}
           </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, Plus, Trash2, Zap } from 'lucide-react'
+import { TVA_RATE } from './InvoicesClient'
 
 interface Props {
   onClose: () => void
@@ -31,37 +32,25 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
   const [importingProduction, setImportingProduction] = useState(false)
 
   useEffect(() => {
-    fetch('/api/customers')
-      .then(r => r.json())
-      .then(d => setCustomers(d.items || []))
-
-    fetch('/api/productions?status=EN_COURS')
-      .then(r => r.json())
-      .then(d => setProductions(d.items || []))
+    fetch('/api/customers').then(r => r.json()).then(d => setCustomers(d.items || []))
+    fetch('/api/productions?status=EN_COURS').then(r => r.json()).then(d => setProductions(d.items || []))
   }, [])
 
   function handleSelectCustomer(id: string) {
     setSelectedCustomerId(id)
     if (!id) { setCustomerName(''); setCustomerEmail(''); return }
     const customer = customers.find(c => c._id === id)
-    if (customer) {
-      setCustomerName(customer.name)
-      setCustomerEmail(customer.email || '')
-    }
+    if (customer) { setCustomerName(customer.name); setCustomerEmail(customer.email || '') }
   }
 
   async function handleSelectProduction(id: string) {
     setSelectedProductionId(id)
     if (!id) return
-
     setImportingProduction(true)
     try {
       const r = await fetch(`/api/productions/${id}/invoice-data`)
       const j = await r.json()
-
       if (j.lines?.length) {
-        // Ajoute les lignes de la production en conservant les lignes manuelles existantes
-        // (on vide les lignes vides d'abord)
         const existingLines = lineItems.filter(l => l.description.trim() !== '')
         setLineItems([...j.lines, ...existingLines])
       }
@@ -79,13 +68,11 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
   }
 
   function updateLine(i: number, key: keyof LineItem, value: string | number) {
-    setLineItems(prev => prev.map((item, idx) =>
-      idx === i ? { ...item, [key]: value } : item
-    ))
+    setLineItems(prev => prev.map((item, idx) => idx === i ? { ...item, [key]: value } : item))
   }
 
   const totalHT = lineItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0)
-  const tva = totalHT * 0.20
+  const tva = totalHT * TVA_RATE
   const totalTTC = totalHT + tva
 
   async function handleSubmit(e: React.FormEvent) {
@@ -148,7 +135,7 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--foreground)' }}>
-            Nouvelle facture
+            Nouveau devis
           </h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)' }}>
             <X size={20} />
@@ -158,22 +145,18 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
         <div style={{ overflowY: 'auto', padding: '24px 28px' }}>
           <form onSubmit={handleSubmit}>
 
-            {/* Sélecteurs client + production */}
+            {/* Sélecteurs */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
               <div>
                 <label style={label}>Client existant</label>
-                <select style={{ ...input, cursor: 'pointer' }}
-                  value={selectedCustomerId}
+                <select style={{ ...input, cursor: 'pointer' }} value={selectedCustomerId}
                   onChange={e => handleSelectCustomer(e.target.value)}>
                   <option value="">— Saisir manuellement —</option>
                   {customers.map(c => (
-                    <option key={c._id} value={c._id}>
-                      {c.name}{c.email ? ` (${c.email})` : ''}
-                    </option>
+                    <option key={c._id} value={c._id}>{c.name}{c.email ? ` (${c.email})` : ''}</option>
                   ))}
                 </select>
               </div>
-
               <div>
                 <label style={label}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -181,28 +164,19 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
                     Lier à une production
                   </span>
                 </label>
-                <select
-                  style={{ ...input, cursor: 'pointer' }}
-                  value={selectedProductionId}
+                <select style={{ ...input, cursor: 'pointer' }} value={selectedProductionId}
                   onChange={e => handleSelectProduction(e.target.value)}
-                  disabled={importingProduction}
-                >
+                  disabled={importingProduction}>
                   <option value="">— Aucune production —</option>
                   {productions.map(p => (
-                    <option key={p._id} value={p._id}>
-                      {p.ref} — {p.name}
-                    </option>
+                    <option key={p._id} value={p._id}>{p.ref} — {p.name}</option>
                   ))}
                 </select>
                 {importingProduction && (
-                  <p style={{ fontSize: '11px', color: '#d97706', marginTop: '3px' }}>
-                    Import des composants en cours…
-                  </p>
+                  <p style={{ fontSize: '11px', color: '#d97706', marginTop: '3px' }}>Import des composants…</p>
                 )}
                 {selectedProductionId && !importingProduction && (
-                  <p style={{ fontSize: '11px', color: '#16a34a', marginTop: '3px' }}>
-                    ✓ Composants importés automatiquement
-                  </p>
+                  <p style={{ fontSize: '11px', color: '#16a34a', marginTop: '3px' }}>✓ Composants importés</p>
                 )}
               </div>
             </div>
@@ -218,27 +192,18 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
               <div>
                 <label style={label}>Email du client</label>
                 <input style={input} type="email" value={customerEmail}
-                  onChange={e => setCustomerEmail(e.target.value)}
-                  placeholder="client@exemple.com" />
+                  onChange={e => setCustomerEmail(e.target.value)} placeholder="client@exemple.com" />
               </div>
               <div>
-                <label style={label}>Date d'échéance</label>
-                <input style={input} type="date" value={dueDate}
-                  onChange={e => setDueDate(e.target.value)} />
+                <label style={label}>Date d'expiration du devis</label>
+                <input style={input} type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} />
               </div>
             </div>
 
-            {/* Lignes de facturation */}
+            {/* Lignes */}
             <div style={{ marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <label style={{ ...label, marginBottom: 0 }}>
-                  Articles / Prestations *
-                  {selectedProductionId && (
-                    <span style={{ marginLeft: '8px', fontSize: '11px', color: '#d97706', fontWeight: 400 }}>
-                      (pièces importées depuis la production + vos lignes manuelles)
-                    </span>
-                  )}
-                </label>
+                <label style={{ ...label, marginBottom: 0 }}>Articles / Prestations *</label>
                 <button type="button" onClick={addLine} style={{
                   display: 'flex', alignItems: 'center', gap: '4px',
                   padding: '5px 10px', borderRadius: '6px',
@@ -264,10 +229,8 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
                   <input style={input} type="number" min="1" required value={item.quantity}
                     onChange={e => updateLine(i, 'quantity', Number(e.target.value))} />
                   <input style={input} type="number" min="0" step="0.01" required value={item.unitPrice}
-                    onChange={e => updateLine(i, 'unitPrice', Number(e.target.value))}
-                    placeholder="0.00" />
-                  <button type="button" onClick={() => removeLine(i)}
-                    disabled={lineItems.length === 1}
+                    onChange={e => updateLine(i, 'unitPrice', Number(e.target.value))} placeholder="0.00" />
+                  <button type="button" onClick={() => removeLine(i)} disabled={lineItems.length === 1}
                     style={{
                       width: '30px', height: '34px', borderRadius: '6px',
                       border: '1px solid #fecaca', background: 'transparent',
@@ -280,21 +243,21 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
                 </div>
               ))}
 
-              {/* Totaux */}
+              {/* Totaux HT / TVA / TTC */}
               <div style={{
                 background: 'var(--card-bg)', border: '1px solid var(--card-border)',
                 borderRadius: '10px', padding: '14px 16px', marginTop: '12px',
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                   <span style={{ fontSize: '13px', color: 'var(--muted)' }}>Total HT</span>
-                  <span style={{ fontSize: '13px', fontWeight: 600 }}>{totalHT.toFixed(2)} €</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--foreground)' }}>{totalHT.toFixed(2)} €</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                   <span style={{ fontSize: '13px', color: 'var(--muted)' }}>TVA (20%)</span>
                   <span style={{ fontSize: '13px', color: 'var(--muted)' }}>{tva.toFixed(2)} €</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--card-border)' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 700 }}>Total TTC</span>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--foreground)' }}>Total TTC</span>
                   <span style={{ fontSize: '14px', fontWeight: 700, color: '#3b82f6' }}>{totalTTC.toFixed(2)} €</span>
                 </div>
               </div>
@@ -302,9 +265,9 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
 
             {/* Notes */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={label}>Notes / Conditions de paiement</label>
+              <label style={label}>Notes / Conditions</label>
               <textarea value={notes} onChange={e => setNotes(e.target.value)}
-                placeholder="ex: Paiement sous 30 jours, main d'œuvre incluse..."
+                placeholder="ex: Devis valable 30 jours, acompte de 30% à la commande..."
                 rows={3}
                 style={{ ...input, resize: 'vertical', fontFamily: 'inherit' }} />
             </div>
@@ -324,7 +287,7 @@ export function InvoiceFormModal({ onClose, onSaved }: Props) {
                 fontSize: '14px', fontWeight: 600, cursor: 'pointer',
                 opacity: loading ? 0.6 : 1,
               }}>
-                {loading ? 'Création…' : 'Créer la facture'}
+                {loading ? 'Création…' : 'Créer le devis'}
               </button>
             </div>
           </form>
