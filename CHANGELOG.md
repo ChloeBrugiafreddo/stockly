@@ -13,6 +13,16 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.15.0] - 2026-07-06
+### Added
+- Onglets Dashboard : Vue d'ensemble + KPI & Rapports
+- KPI : valeur stock HT, CA année, mouvements 30j, productions, coût
+- Tableau stock critique et derniers devis dans l'onglet KPI
+- Export rapport complet PDF (stock + devis + productions)
+- Routes API /api/reports/stock, /api/reports/quotes, /api/reports/productions, /api/reports/movements
+### Changed
+- Page dashboard restructurée avec DashboardTabs
+
 ## [1.14.0] - 2025-05-11
 ### Added
 - Rapport de réapprovisionnement : modale avec liste des produits BAS/RUPTURE
