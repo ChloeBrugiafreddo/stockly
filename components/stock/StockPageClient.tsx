@@ -6,6 +6,7 @@ import { StockTable } from './StockTable'
 import { StockFormModal } from './StockFormModal'
 import { MovementModal } from './MovementModal'
 import { HistoryModal } from './HistoryModal'
+import { ProductIdentityModal } from './ProductIdentityModal'
 
 export interface StockItem {
   _id: string
@@ -32,6 +33,7 @@ export function StockPageClient() {
   const [editItem, setEditItem] = useState<StockItem | null>(null)
   const [movementItem, setMovementItem] = useState<{ item: StockItem; type: 'IN' | 'OUT' } | null>(null)
   const [historyItem, setHistoryItem] = useState<StockItem | null>(null)
+  const [identityItem, setIdentityItem] = useState<StockItem | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -105,7 +107,6 @@ export function StockPageClient() {
         display: 'flex', gap: '10px', marginBottom: '20px',
         alignItems: 'center', flexWrap: 'wrap',
       }}>
-        {/* Recherche */}
         <div style={{ position: 'relative', flex: 1, minWidth: '200px', maxWidth: '320px' }}>
           <Search size={15} style={{
             position: 'absolute', left: '12px', top: '50%',
@@ -124,7 +125,6 @@ export function StockPageClient() {
           />
         </div>
 
-        {/* Filtre catégorie */}
         <select
           value={filterCategory}
           onChange={e => setFilterCategory(e.target.value)}
@@ -142,7 +142,6 @@ export function StockPageClient() {
           ))}
         </select>
 
-        {/* Filtre état */}
         <select
           value={filterEtat}
           onChange={e => setFilterEtat(e.target.value)}
@@ -160,7 +159,6 @@ export function StockPageClient() {
           <option value="RUPTURE">🔴 Rupture</option>
         </select>
 
-        {/* Reset */}
         {(filterCategory || filterEtat || search) && (
           <button
             onClick={() => { setSearch(''); setFilterCategory(''); setFilterEtat('') }}
@@ -175,7 +173,6 @@ export function StockPageClient() {
           </button>
         )}
 
-        {/* Rafraîchir */}
         <button
           onClick={load}
           style={{
@@ -198,6 +195,7 @@ export function StockPageClient() {
         onDelete={handleDelete}
         onMovement={(item, type) => setMovementItem({ item, type })}
         onHistory={(item) => setHistoryItem(item)}
+        onIdentity={(item) => setIdentityItem(item)}
       />
 
       {formOpen && (
@@ -221,6 +219,13 @@ export function StockPageClient() {
         <HistoryModal
           item={historyItem}
           onClose={() => setHistoryItem(null)}
+        />
+      )}
+
+      {identityItem && (
+        <ProductIdentityModal
+          item={identityItem}
+          onClose={() => setIdentityItem(null)}
         />
       )}
     </div>
