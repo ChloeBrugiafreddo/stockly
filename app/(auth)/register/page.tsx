@@ -191,6 +191,12 @@ export default function RegisterPage() {
             Se connecter
           </Link>
         </p>
+
+        <p style={{ textAlign: 'center', fontSize: '13px', color: '#64748b', marginTop: '12px' }}>
+          <Link href="/" style={{ color: '#64748b', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+            ← Retour à l'accueil
+          </Link>
+        </p>
       </div>
     </div>
   )
