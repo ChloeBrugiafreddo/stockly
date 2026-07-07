@@ -1,15 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { User, Building2, Sliders } from 'lucide-react'
+import { User, Building2, Sliders, Users } from 'lucide-react'
 import { ProfileSettings } from './ProfileSettings'
 import { CompanySettings } from './CompanySettings'
 import { CustomFieldsSettings } from './CustomFieldsSettings'
+import { UsersSettings } from './UsersSettings'
 
 const tabs = [
   { id: 'profile',       icon: User,      label: 'Profil' },
   { id: 'company',       icon: Building2, label: 'Entreprise' },
   { id: 'custom-fields', icon: Sliders,   label: 'Champs personnalisés' },
+  { id: 'users',         icon: Users,     label: 'Utilisateurs' },
 ]
 
 export function SettingsClient() {
@@ -17,8 +19,6 @@ export function SettingsClient() {
 
   return (
     <div style={{ maxWidth: '800px' }}>
-
-      {/* Header */}
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '4px' }}>
           Paramètres
@@ -28,12 +28,11 @@ export function SettingsClient() {
         </p>
       </div>
 
-      {/* Onglets */}
       <div style={{
         display: 'flex', gap: '4px',
         background: 'var(--card-bg)', border: '1px solid var(--card-border)',
         borderRadius: '12px', padding: '4px',
-        marginBottom: '28px', width: 'fit-content',
+        marginBottom: '28px', flexWrap: 'wrap',
       }}>
         {tabs.map(tab => {
           const Icon = tab.icon
@@ -60,10 +59,10 @@ export function SettingsClient() {
         })}
       </div>
 
-      {/* Contenu */}
-      {activeTab === 'profile' && <ProfileSettings />}
-      {activeTab === 'company' && <CompanySettings />}
+      {activeTab === 'profile'       && <ProfileSettings />}
+      {activeTab === 'company'       && <CompanySettings />}
       {activeTab === 'custom-fields' && <CustomFieldsSettings />}
+      {activeTab === 'users'         && <UsersSettings />}
     </div>
   )
 }
