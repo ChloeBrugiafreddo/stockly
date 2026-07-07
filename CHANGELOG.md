@@ -13,6 +13,16 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.17.0] - 2026-07-06
+### Added
+- Landing page professionnelle avec dark/light mode
+- Animations fade-in au scroll (IntersectionObserver)
+- Sections : hero, secteurs, features, stats, CTA
+- Lien "Retour à l'accueil" sur les pages login et register
+- Redirection vers /dashboard si déjà connecté
+### Changed
+- app/page.tsx remplacé par la landing page (plus de redirect direct)
+
 ## [1.16.0] - 2026-07-06
 ### Added
 - Multi-utilisateurs avec rôles : Admin, Manager, Employé
