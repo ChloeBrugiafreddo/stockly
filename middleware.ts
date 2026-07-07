@@ -3,13 +3,12 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const response = NextResponse.next()
-  // Passe le pathname dans un header pour le layout
   response.headers.set('x-pathname', request.nextUrl.pathname)
   return response
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.svg$|api/).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/|.*\\.png$|.*\\.jpg$|.*\\.svg$|.*\\.ico$).*)',
   ],
 }

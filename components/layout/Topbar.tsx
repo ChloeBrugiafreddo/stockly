@@ -3,6 +3,7 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Logo } from '@/components/ui/Logo'
 import { Search, Bell } from 'lucide-react'
 import { NotificationsPanel } from './NotificationsPanel'
+import { GlobalSearch } from './GlobalSearch'
 
 export async function Topbar() {
   const session = await auth()
@@ -34,33 +35,7 @@ export async function Topbar() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
 
         {/* Barre recherche */}
-        <button
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '9px 16px',
-            borderRadius: '12px',
-            border: '1px solid var(--card-border)',
-            background: 'var(--card-bg)',
-            color: 'var(--muted)',
-            fontSize: '14px',
-            cursor: 'pointer',
-            minWidth: '200px',
-          }}
-        >
-          <Search size={15} strokeWidth={1.8} />
-          <span>Rechercher…</span>
-          <kbd style={{
-            marginLeft: 'auto',
-            fontSize: '11px',
-            padding: '2px 6px',
-            borderRadius: '6px',
-            background: 'var(--background)',
-            color: 'var(--muted)',
-            border: '1px solid var(--card-border)',
-          }}>⌘K</kbd>
-        </button>
+        <GlobalSearch />
 
         {/* Notifications */}
         <NotificationsPanel />
