@@ -13,6 +13,21 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.19.0] - 2026-07-06
+### Added
+- Super Admin Stockly : panneau d'administration global
+- Login Super Admin sécurisé (cookie httpOnly, credentials en .env)
+- Stats globales : entreprises, users, produits, devis, productions, mouvements
+- Tableau détaillé de toutes les entreprises avec métriques
+- Gestion des secteurs : créer, modifier, supprimer
+- Formulaire création secteur : couleurs, vocabulaire, icônes, catégories
+- Aperçu live du thème lors de la création/modification
+- Suppression entreprise avec toutes ses données
+- Routes API /api/superadmin/auth, /api/superadmin/check
+- Routes API /api/superadmin/stats, /api/superadmin/sectors, /api/superadmin/companies/[id]
+### Changed
+- Modèle Sector enrichi avec theme, vocab, icons, defaultCategories
+
 ## [1.18.0] - 2026-07-06
 ### Added
 - Thèmes dynamiques par domaine stockés en BDD (collection sectors)
