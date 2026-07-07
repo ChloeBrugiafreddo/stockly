@@ -9,6 +9,7 @@ import { MovementModal } from './MovementModal'
 import { HistoryModal } from './HistoryModal'
 import { ProductIdentityModal } from './ProductIdentityModal'
 import { ReorderReportButton } from './ReorderReportButton'
+import { useDomainTheme } from '../providers/DomainThemeProvider'
 
 export interface StockItem {
   _id: string
@@ -25,6 +26,7 @@ export interface StockItem {
 }
 
 export function StockPageClient() {
+  const { vocab, icons } = useDomainTheme()
   const router = useRouter()
   const [items, setItems] = useState<StockItem[]>([])
   const [loading, setLoading] = useState(false)
@@ -90,11 +92,9 @@ export function StockPageClient() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '4px' }}>
-            Stock
-          </h1>
+            <h1>{icons.product} {vocab.stock}</h1>
           <p style={{ fontSize: '14px', color: 'var(--muted)' }}>
-            {items.length} produit{items.length > 1 ? 's' : ''}
+            {items.length} {items.length > 1 ? vocab.products.toLowerCase() : vocab.product.toLowerCase()}
           </p>
         </div>
         <button
@@ -102,12 +102,12 @@ export function StockPageClient() {
           style={{
             display: 'flex', alignItems: 'center', gap: '8px',
             padding: '10px 18px', borderRadius: '10px',
-            background: '#3b82f6', color: 'white', border: 'none',
+            background: 'var(--domain-primary)', color: 'white', border: 'none',
             fontSize: '14px', fontWeight: 600, cursor: 'pointer',
           }}
         >
           <Plus size={16} />
-          Ajouter un produit
+          + Ajouter {vocab.product.toLowerCase()}
         </button>
       </div>
 

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { UserMenu } from './UserMenu'
 import { useSession } from 'next-auth/react'
+import { useDomainTheme } from '../providers/DomainThemeProvider'
 
 const domainIcons: Record<string, any> = {
   'Automobile': Car,
@@ -32,6 +33,7 @@ const allNavItems = [
 ]
 
 export function Sidebar() {
+  const { vocab, icons, primary, sectorName } = useDomainTheme()
   const pathname = usePathname()
   const { data: session } = useSession()
   const user = session?.user as any
@@ -61,20 +63,26 @@ export function Sidebar() {
       }}
     >
       {/* Badge domaine */}
-      {domainName && (
+      {sectorName && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: '8px',
-          padding: '8px 12px', borderRadius: '10px',
-          background: `${domainColor}15`,
+          padding: '10px 14px', borderRadius: '12px',
+          background: 'var(--domain-primary-light)',
           marginBottom: '16px',
+          border: '1px solid var(--domain-primary)',
         }}>
-          <DomainIcon size={14} color={domainColor} />
-          <span style={{ fontSize: '12px', fontWeight: 600, color: domainColor }}>
-            {domainName}
-          </span>
+          <span style={{ fontSize: '16px' }}>{icons.product}</span>
+          <div>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--domain-primary)', display: 'block' }}>
+              {sectorName}
+            </span>
+            <span style={{ fontSize: '10px', color: 'var(--domain-primary)', opacity: 0.7 }}>
+              {vocab.products} · {vocab.productions}
+            </span>
+          </div>
         </div>
       )}
-
+      
       {/* Nav principale */}
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1 }}>
         {navItems.map(({ href, icon: Icon, label }) => {
@@ -87,8 +95,8 @@ export function Sidebar() {
                 display: 'flex', alignItems: 'center', gap: '12px',
                 padding: '10px 14px', borderRadius: '10px',
                 textDecoration: 'none',
-                background: active ? 'var(--accent-light)' : 'transparent',
-                color: active ? 'var(--accent-text)' : 'var(--muted)',
+                background: active ? 'var(--domain-primary-light)' : 'transparent',
+                color: active ? 'var(--domain-primary)' : 'var(--muted)',
                 fontSize: '14px', fontWeight: active ? 600 : 400,
                 transition: 'all 0.15s',
               }}

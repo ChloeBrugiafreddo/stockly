@@ -16,6 +16,12 @@
   --danger: #ef4444;
   --success: #22c55e;
   --warning: #f59e0b;
+    --domain-primary: #3b82f6;
+  --domain-primary-light: #eff6ff;
+  --domain-primary-dark: #1d4ed8;
+  --domain-secondary: #6366f1;
+  --domain-accent: #f59e0b;
+  --domain-accent-light: #fffbeb;
 }
 
 .dark {

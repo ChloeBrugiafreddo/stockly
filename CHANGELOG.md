@@ -13,6 +13,20 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.18.0] - 2026-07-06
+### Added
+- Thèmes dynamiques par domaine stockés en BDD (collection sectors)
+- CSS variables appliquées automatiquement à la connexion
+- Vocabulaire adapté : Pièces/Véhicules, Matières/Collections, Équipements/Recettes
+- Icônes contextuelles par secteur
+- DomainThemeProvider et hook useDomainTheme
+- Route API GET /api/theme
+### Changed
+- Modèle Sector enrichi : theme, vocab, icons, defaultCategories
+- lib/seed.ts : thèmes complets insérés pour les 3 secteurs
+- Sidebar : couleurs dynamiques via CSS vars
+- Pages Stock et Productions : titres et vocabulaire adaptés au domaine
+
 ## [1.17.0] - 2026-07-06
 ### Added
 - Landing page professionnelle avec dark/light mode

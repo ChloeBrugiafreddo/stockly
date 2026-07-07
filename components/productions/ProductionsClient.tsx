@@ -6,6 +6,7 @@ import { ProductionTable } from './ProductionTable'
 import { ProductionFormModal } from './ProductionFormModal'
 import { ProductionDetailModal } from './ProductionDetailModal'
 import { ProductionIdentityModal } from './ProductionIdentityModal'
+import { useDomainTheme } from '../providers/DomainThemeProvider'
 
 export interface Component {
   _id: string
@@ -29,6 +30,7 @@ export interface Production {
 }
 
 export function ProductionsClient() {
+  const { vocab, icons } = useDomainTheme()
   const [items, setItems] = useState<Production[]>([])
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
@@ -75,24 +77,20 @@ export function ProductionsClient() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '4px' }}>
-            Productions
-          </h1>
-          <p style={{ fontSize: '14px', color: 'var(--muted)' }}>
-            {items.length} production{items.length > 1 ? 's' : ''}
-          </p>
+          <h1>{icons.production} {vocab.productions}</h1>
+          <p>{items.length} {vocab.production.toLowerCase()}{items.length > 1 ? 's' : ''}</p>
         </div>
         <button
           onClick={() => setFormOpen(true)}
           style={{
             display: 'flex', alignItems: 'center', gap: '8px',
             padding: '10px 18px', borderRadius: '10px',
-            background: '#3b82f6', color: 'white', border: 'none',
+            background:  'var(--domain-primary)', color: 'white', border: 'none',
             fontSize: '14px', fontWeight: 600, cursor: 'pointer',
           }}
         >
           <Plus size={16} />
-          Nouvelle production
+         + Nouvelle {vocab.production.toLowerCase()}
         </button>
       </div>
 

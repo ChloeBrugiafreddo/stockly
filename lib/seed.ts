@@ -2,102 +2,148 @@ import { connectDB } from './mongodb'
 import Sector from '@/models/Sector'
 import Category from '@/models/Category'
 
-const sectorsData = [
-  {
-    name: 'Automobile',
-    description: 'Gestion de pièces détachées, véhicules, compatibilité et entretien',
-    modules: [
-      'Gestion véhicules',
-      'Compatibilité pièces',
-      'Diagnostic',
-      'Entretien & révision',
-      'Traçabilité scan',
-    ],
-    isSystem: true,
-    categories: [
-      'Moteur & périphériques',
-      'Transmission & chaîne cinématique',
-      'Freinage & sécurité active',
-      'Direction & trains roulants',
-      'Suspension',
-      'Électricité & électronique',
-      'Carburant & dépollution',
-      'Refroidissement & chauffage / clim',
-      'Échappement',
-      'Carrosserie & ouvrants',
-      'Habitacle & sécurité passive',
-      'Vitrages & visibilité',
-      'Roues & pneumatiques',
-      'Fluides & lubrifiants',
-      'Fixations & consommables',
-    ],
-  },
-  {
-    name: 'Textile',
-    description: 'Gestion de matières, fournitures, machines et produits finis',
-    modules: [
-      'Gestion des variantes',
-      'Collections',
-      'Fournisseurs matières',
-      'Traçabilité scan',
-    ],
-    isSystem: true,
-    categories: [
-      'Tissus & matières',
-      'Fils & bobines',
-      'Aiguilles & outils',
-      'Machines à coudre',
-      'Fermetures & boutons',
-      'Vêtements finis',
-      'Accessoires',
-    ],
-  },
-  {
-    name: 'Alimentaire',
-    description: 'Gestion de matériel, traçabilité DLC, lots et hygiène',
-    modules: [
-      'Traçabilité DLC',
-      'Gestion des lots',
-      'Température',
-      'Allergènes',
-      'Hygiène & HACCP',
-      'Traçabilité scan',
-    ],
-    isSystem: true,
-    categories: [
-      'Couteaux & découpe',
-      'Cuisson & fours',
-      'Réfrigération & stockage froid',
-      'Stockage sec & contenants',
-      'Préparation & mixage',
-      'Pâtisserie & boulangerie',
-      'Hygiène & nettoyage',
-      'Pesage & mesure',
-      'Vaisselle & service',
-    ],
-  },
-]
-
 export async function seedSectors() {
   await connectDB()
 
-  for (const sectorData of sectorsData) {
-    const { categories, ...sectorFields } = sectorData
+  const sectors = [
+    {
+      name: 'Automobile',
+      description: 'Gestion des pièces détachées et véhicules',
+      isSystem: true,
+      theme: {
+        primary:      '#1d4ed8',
+        primaryLight: '#eff6ff',
+        primaryDark:  '#1e3a8a',
+        secondary:    '#0ea5e9',
+        accent:       '#f59e0b',
+        accentLight:  '#fffbeb',
+      },
+      vocab: {
+        product:     'Pièce',
+        products:    'Pièces',
+        production:  'Véhicule',
+        productions: 'Véhicules',
+        stock:       'Pièces en stock',
+      },
+      icons: {
+        product:    '🔧',
+        production: '🚗',
+        supplier:   '🏭',
+        customer:   '👤',
+      },
+      defaultCategories: [
+        'Moteur & périphériques',
+        'Freinage & sécurité active',
+        'Suspension',
+        'Transmission & chaîne cinématique',
+        'Carrosserie & ouvrants',
+        'Électricité & électronique',
+        'Habitacle & sécurité passive',
+        'Refroidissement & chauffage / clim',
+        'Échappement',
+        'Roues & pneumatiques',
+        'Direction & trains roulants',
+        'Vitrages & visibilité',
+        'Fluides & lubrifiants',
+        'Fixations & consommables',
+        'Carburant & dépollution',
+      ],
+    },
+    {
+      name: 'Textile',
+      description: 'Gestion des matières premières et collections',
+      isSystem: true,
+      theme: {
+        primary:      '#7c3aed',
+        primaryLight: '#f5f3ff',
+        primaryDark:  '#5b21b6',
+        secondary:    '#ec4899',
+        accent:       '#06b6d4',
+        accentLight:  '#ecfeff',
+      },
+      vocab: {
+        product:     'Matière',
+        products:    'Matières',
+        production:  'Collection',
+        productions: 'Collections',
+        stock:       'Matières premières',
+      },
+      icons: {
+        product:    '🧵',
+        production: '👗',
+        supplier:   '🏭',
+        customer:   '👤',
+      },
+      defaultCategories: [
+        'Tissus naturels',
+        'Tissus synthétiques',
+        'Fils & laines',
+        'Boutons & fermetures',
+        'Doublures & entoilages',
+        'Élastiques & rubans',
+        'Broderies & dentelles',
+        'Teintures & colorants',
+        'Accessoires de couture',
+        'Emballages & étiquettes',
+      ],
+    },
+    {
+      name: 'Alimentaire',
+      description: 'Gestion des équipements et traçabilité',
+      isSystem: true,
+      theme: {
+        primary:      '#16a34a',
+        primaryLight: '#f0fdf4',
+        primaryDark:  '#14532d',
+        secondary:    '#f59e0b',
+        accent:       '#ef4444',
+        accentLight:  '#fef2f2',
+      },
+      vocab: {
+        product:     'Équipement',
+        products:    'Équipements',
+        production:  'Recette',
+        productions: 'Recettes & Lots',
+        stock:       'Inventaire cuisine',
+      },
+      icons: {
+        product:    '🍳',
+        production: '👨‍🍳',
+        supplier:   '🏭',
+        customer:   '👤',
+      },
+      defaultCategories: [
+        'Cuisson & four',
+        'Découpe & préparation',
+        'Réfrigération',
+        'Ustensiles',
+        'Vaisselle & service',
+        'Nettoyage & hygiène',
+        'Stockage & conservation',
+        'Électroménager',
+        'Emballage',
+        'Sécurité alimentaire',
+      ],
+    },
+  ]
 
+  for (const sectorData of sectors) {
+    const { defaultCategories, ...sectorFields } = sectorData
     const sector = await Sector.findOneAndUpdate(
       { name: sectorFields.name },
-      { $setOnInsert: sectorFields },
+      { $set: sectorFields },
       { upsert: true, new: true }
     )
 
-    for (const catName of categories) {
-      await Category.updateOne(
-        { name: catName, sectorId: sector._id, parentId: null },
-        { $setOnInsert: { name: catName, sectorId: sector._id, parentId: null } },
+    // Crée les catégories par défaut
+    for (const catName of defaultCategories) {
+      await Category.findOneAndUpdate(
+        { name: catName, sectorId: sector._id },
+        { $set: { name: catName, sectorId: sector._id } },
         { upsert: true }
       )
     }
   }
 
-  console.log('✅ Secteurs et catégories insérés')
+  return { ok: true, message: 'Secteurs et thèmes insérés' }
 }
