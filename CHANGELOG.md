@@ -13,6 +13,21 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.16.0] - 2026-07-06
+### Added
+- Multi-utilisateurs avec rôles : Admin, Manager, Employé
+- Admin peut créer des comptes collaborateurs depuis Paramètres → Utilisateurs
+- Sidebar filtrée selon le rôle connecté
+- Badge rôle coloré dans le UserMenu
+- roleName inclus dans le JWT token et la session
+- Routes API GET/POST /api/settings/users
+- Routes API PUT/DELETE /api/settings/users/[id]
+- Composant UsersSettings avec liste des membres et changement de rôle
+### Changed
+- lib/auth.ts : roleName et domain ajoutés dans le token JWT
+- Sidebar : navItems filtrés par rôle, Paramètres visible Admin uniquement
+- UserMenu : affiche le rôle de l'utilisateur connecté
+
 ## [1.15.0] - 2026-07-06
 ### Added
 - Onglets Dashboard : Vue d'ensemble + KPI & Rapports

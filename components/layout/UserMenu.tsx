@@ -1,22 +1,30 @@
 'use client'
 
 import { signOut } from 'next-auth/react'
-import { LogOut, User } from 'lucide-react'
+import { LogOut } from 'lucide-react'
+
+const roleColors: Record<string, { bg: string; color: string }> = {
+  Admin:   { bg: '#eff6ff', color: '#1d4ed8' },
+  Manager: { bg: '#f5f3ff', color: '#7c3aed' },
+  Employé: { bg: '#f0fdf4', color: '#16a34a' },
+}
 
 interface Props {
   name: string
   email: string
   initials: string
+  roleName: string
 }
 
-export function UserMenu({ name, email, initials }: Props) {
+export function UserMenu({ name, email, initials, roleName }: Props) {
+  const roleStyle = roleColors[roleName] || roleColors['Employé']
+
   return (
     <div style={{
       borderTop: '1px solid var(--sidebar-border)',
       paddingTop: '12px',
       marginTop: '8px',
     }}>
-      {/* Infos utilisateur */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: '10px',
         padding: '8px 12px', borderRadius: '10px',
@@ -24,23 +32,27 @@ export function UserMenu({ name, email, initials }: Props) {
       }}>
         <div style={{
           width: '32px', height: '32px', borderRadius: '50%',
-          background: 'var(--accent-light)', color: 'var(--accent-text)',
+          background: roleStyle.bg, color: roleStyle.color,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '12px', fontWeight: 600, flexShrink: 0,
+          fontSize: '12px', fontWeight: 700, flexShrink: 0,
         }}>
           {initials}
         </div>
-        <div style={{ overflow: 'hidden' }}>
+        <div style={{ overflow: 'hidden', flex: 1 }}>
           <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--foreground)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {name}
           </p>
-          <p style={{ fontSize: '11px', color: 'var(--muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {email}
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+            <span style={{
+              fontSize: '10px', fontWeight: 600, padding: '1px 6px',
+              borderRadius: '8px', background: roleStyle.bg, color: roleStyle.color,
+            }}>
+              {roleName}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Bouton déconnexion */}
       <button
         onClick={() => signOut({ callbackUrl: '/login' })}
         style={{
