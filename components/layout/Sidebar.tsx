@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Package, Users, Truck,
   FileText, Settings, Factory, Car,
-  Shirt, Apple, Grid, BarChart2
+  Shirt, Apple, Grid, BarChart2,
+  ScanLine
 } from 'lucide-react'
 import { UserMenu } from './UserMenu'
 import { useSession } from 'next-auth/react'
@@ -26,6 +27,7 @@ const domainColors: Record<string, string> = {
 const allNavItems = [
   { href: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard',    roles: ['Admin', 'Manager', 'Employé'] },
   { href: '/stock',       icon: Package,         label: 'Stock',        roles: ['Admin', 'Manager', 'Employé'] },
+  { href: '/scan',        icon: ScanLine,        label: 'Scanner',      roles: ['Admin', 'Manager', 'Employé'] },
   { href: '/productions', icon: Factory,         label: 'Productions',  roles: ['Admin', 'Manager', 'Employé'] },
   { href: '/customers',   icon: Users,           label: 'Clients',      roles: ['Admin', 'Manager'] },
   { href: '/suppliers',   icon: Truck,           label: 'Fournisseurs', roles: ['Admin', 'Manager'] },
