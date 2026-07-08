@@ -49,6 +49,7 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
   const [customValues, setCustomValues] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [suppliers, setSuppliers] = useState<any[]>([])
 
   const [form, setForm] = useState({
     sku: item?.sku || '',
@@ -56,6 +57,7 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
     description: item?.description || '',
     price: item?.price?.toString() || '0',
     categoryId: item?.categoryId?._id || '',
+    supplierId: (item as any)?.supplierId?._id || '',  // ← ajoute
     quantity: item?.totalQuantity?.toString() || '0',
     minimumStock: item?.minimumStock?.toString() || '0',
   })
@@ -73,6 +75,9 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
         const productFields = (d.fields || []).filter((f: any) => f.entity === 'product')
         setCustomFields(productFields)
       })
+      fetch('/api/suppliers')
+        .then(r => r.json())
+        .then(d => setSuppliers(d.items || []))
 
     // Si on est en édition, charge les valeurs existantes
     if (isEdit && item._id) {
@@ -103,12 +108,13 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
     const r = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+     body: JSON.stringify({
         sku: form.sku,
         name: form.name,
         description: form.description,
         price: Number(form.price),
         categoryId: form.categoryId || null,
+        supplierId: form.supplierId || null,  // ← ajoute
         quantity: Number(form.quantity),
         minimumStock: Number(form.minimumStock),
       }),
@@ -265,6 +271,19 @@ export function StockFormModal({ item, onClose, onSaved }: Props) {
                 <option value="">Sans catégorie</option>
                 {categories.map(c => (
                   <option key={c._id} value={c._id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={labelStyle}>Fournisseur</label>
+              <select style={inputStyle} value={form.supplierId}
+                onChange={e => setField('supplierId', e.target.value)}>
+                <option value="">Sans fournisseur</option>
+                {suppliers.map(s => (
+                  <option key={s._id} value={s._id}>
+                    {s.name}{s.email ? ` — ${s.email}` : ''}
+                  </option>
                 ))}
               </select>
             </div>

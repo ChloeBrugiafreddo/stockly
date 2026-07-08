@@ -6,7 +6,7 @@ import { Plus, Search, Pencil, Trash2, RefreshCw } from 'lucide-react'
 interface Field {
   key: string
   label: string
-  type?: 'text' | 'email' | 'tel'
+  type?: 'text' | 'email' | 'tel' | 'textarea'  // ← ajoute textarea
   required?: boolean
   placeholder?: string
 }
@@ -274,12 +274,19 @@ export function EntityPage({ title, apiPath, fields, columns, onRowClick }: Enti
             </h2>
 
             <form onSubmit={handleSubmit}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {fields.map(field => (
-                  <div key={field.key}>
-                    <label style={labelStyle}>
-                      {field.label} {field.required && '*'}
-                    </label>
+              {fields.map(field => (
+                <div key={field.key}>
+                  <label style={labelStyle}>
+                    {field.label} {field.required && '*'}
+                  </label>
+                  {field.type === 'textarea' ? (
+                    <textarea
+                      style={{ ...inputStyle, resize: 'vertical', minHeight: '80px', fontFamily: 'inherit' }}
+                      placeholder={field.placeholder || ''}
+                      value={form[field.key] || ''}
+                      onChange={e => setForm((f: any) => ({ ...f, [field.key]: e.target.value }))}
+                    />
+                  ) : (
                     <input
                       style={inputStyle}
                       type={field.type || 'text'}
@@ -288,9 +295,9 @@ export function EntityPage({ title, apiPath, fields, columns, onRowClick }: Enti
                       value={form[field.key] || ''}
                       onChange={e => setForm((f: any) => ({ ...f, [field.key]: e.target.value }))}
                     />
-                  </div>
-                ))}
-              </div>
+                  )}
+                </div>
+              ))}
 
               {error && (
                 <p style={{ color: '#dc2626', fontSize: '13px', marginTop: '12px' }}>{error}</p>
