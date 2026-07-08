@@ -90,7 +90,7 @@ export function ProductionsClient() {
           }}
         >
           <Plus size={16} />
-         + Nouvelle {vocab.production.toLowerCase()}
+         Nouvelle {vocab.production.toLowerCase()}
         </button>
       </div>
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Search, RefreshCw } from 'lucide-react'
+import { Plus, Search, RefreshCw, FileDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { StockTable } from './StockTable'
 import { StockFormModal } from './StockFormModal'
@@ -10,6 +10,7 @@ import { HistoryModal } from './HistoryModal'
 import { ProductIdentityModal } from './ProductIdentityModal'
 import { ReorderReportButton } from './ReorderReportButton'
 import { useDomainTheme } from '../providers/DomainThemeProvider'
+import { exportToExcel } from '@/lib/exportExcel'
 
 export interface StockItem {
   _id: string
@@ -86,6 +87,72 @@ export function StockPageClient() {
     )
   }
 
+  async function handleExportExcel() {
+      const r = await fetch('/api/reports/stock')
+      const data = await r.json()
+
+      await exportToExcel([
+        {
+          name: 'Stock',
+          headers: ['État', 'SKU', 'Produit', 'Catégorie', 'Fournisseur', 'Quantité', 'Seuil mini', 'Prix HT (€)', 'Valeur HT (€)'],
+          rows: (data.rows || []).map((r: any) => [
+            r.etat,
+            r.sku,
+            r.name,
+            r.category,
+            r.supplier,
+            r.quantity,
+            r.minimumStock,
+            r.unitPrice > 0 ? r.unitPrice.toFixed(2) : '—',
+            r.totalValue > 0 ? r.totalValue.toFixed(2) : '—',
+          ]),
+          colors: { header: '1D4ED8', accent: 'EFF6FF' }, // bleu
+        },
+      ], `stock-${new Date().toISOString().slice(0, 10)}`)
+    }
+
+    async function handleExportPDF() {
+        const r = await fetch('/api/reports/stock')
+        const data = await r.json()
+
+        const { jsPDF } = await import('jspdf')
+        const { default: autoTable } = await import('jspdf-autotable')
+        const doc = new jsPDF({ orientation: 'landscape' })
+        const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+
+        doc.setFillColor(29, 78, 216)
+        doc.rect(0, 0, 297, 28, 'F')
+        doc.setFontSize(18); doc.setTextColor(255,255,255); doc.setFont('helvetica','bold')
+        doc.text('STOCKLY — Rapport Stock', 14, 12)
+        doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(191,219,254)
+        doc.text(`Généré le ${date}  |  ${data.summary?.totalProducts || 0} produits  |  Valeur : ${data.summary?.totalValue?.toFixed(2) || 0} € HT`, 14, 22)
+
+        autoTable(doc, {
+          startY: 36,
+          head: [['État', 'SKU', 'Produit', 'Catégorie', 'Fournisseur', 'Stock', 'Seuil', 'Prix HT', 'Valeur HT']],
+          body: (data.rows || []).map((r: any) => [
+            r.etat, r.sku, r.name, r.category, r.supplier,
+            r.quantity, r.minimumStock,
+            r.unitPrice > 0 ? `${r.unitPrice.toFixed(2)} €` : '—',
+            r.totalValue > 0 ? `${r.totalValue.toFixed(2)} €` : '—',
+          ]),
+          theme: 'grid',
+          headStyles: { fillColor: [29, 78, 216], fontSize: 8 },
+          bodyStyles: { fontSize: 8 },
+          didParseCell: (d) => {
+            if (d.column.index === 0 && d.section === 'body') {
+              const v = d.cell.text[0]
+              if (v === 'RUPTURE') { d.cell.styles.textColor = [220,38,38]; d.cell.styles.fontStyle = 'bold' }
+              else if (v === 'BAS') { d.cell.styles.textColor = [217,119,6]; d.cell.styles.fontStyle = 'bold' }
+              else { d.cell.styles.textColor = [22,163,74] }
+            }
+          },
+          margin: { left: 14, right: 14 },
+        })
+
+        doc.save(`stock-${new Date().toISOString().slice(0,10)}.pdf`)
+      }
+
   return (
     <div style={{ maxWidth: '1200px' }}>
 
@@ -97,18 +164,36 @@ export function StockPageClient() {
             {items.length} {items.length > 1 ? vocab.products.toLowerCase() : vocab.product.toLowerCase()}
           </p>
         </div>
-        <button
-          onClick={handleAdd}
-          style={{
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={handleExportPDF} style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '10px 16px', borderRadius: '10px',
+            border: '1px solid var(--card-border)',
+            background: 'var(--card-bg)', color: 'var(--foreground)',
+            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+          }}>
+            <FileDown size={15} />
+            PDF
+          </button>
+          <button onClick={handleExportExcel} style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '10px 16px', borderRadius: '10px',
+            border: '1px solid var(--card-border)',
+            background: 'var(--card-bg)', color: 'var(--foreground)',
+            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+          }}>
+            📊 Excel
+          </button>
+          <button onClick={handleAdd} style={{
             display: 'flex', alignItems: 'center', gap: '8px',
             padding: '10px 18px', borderRadius: '10px',
             background: 'var(--domain-primary)', color: 'white', border: 'none',
             fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-          }}
-        >
-          <Plus size={16} />
-          + Ajouter {vocab.product.toLowerCase()}
-        </button>
+          }}>
+            <Plus size={16} />
+            Ajouter {vocab.product.toLowerCase()}
+          </button>
+        </div>
       </div>
 
       {/* Filtres */}
