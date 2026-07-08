@@ -7,6 +7,7 @@ const SupplierSchema = new Schema({
   phone:     { type: String },
   address:   { type: String },
   country:   { type: String },
+  notes:     { type: String },
 }, { timestamps: true })
 
 export default mongoose.models.Supplier || mongoose.model('Supplier', SupplierSchema)

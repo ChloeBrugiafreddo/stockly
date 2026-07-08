@@ -23,7 +23,7 @@ export interface StockItem {
   minimumStock: number
   etat: 'OK' | 'BAS' | 'RUPTURE'
   categoryId?: { _id: string; name: string }
-  supplierId?: { _id: string; name: string }
+  supplierId?: { _id: string; name: string }  // ← vérifie que c'est là
 }
 
 export function StockPageClient() {

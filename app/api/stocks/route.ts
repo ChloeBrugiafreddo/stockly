@@ -28,11 +28,12 @@ export async function GET(req: Request) {
     }
     if (categoryId) filter.categoryId = categoryId
 
-    const products = await Product.find(filter)
-      .populate('categoryId', 'name')
-      .sort({ createdAt: -1 })
-      .limit(200)
-      .lean()
+  const products = await Product.find(filter)
+    .populate('categoryId', 'name')
+    .populate('supplierId', 'name email phone')
+    .sort({ createdAt: -1 })
+    .limit(200)
+    .lean()
 
     const productsWithStock = await Promise.all(
       products.map(async (product: any) => {

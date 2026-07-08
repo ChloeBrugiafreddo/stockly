@@ -13,6 +13,21 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.22.0] - 2026-07-08
+### Added
+- Page Fournisseurs redesignée : cartes groupées par pays
+- Email et téléphone cliquables (mailto: et tel:)
+- Champ Notes dans le formulaire fournisseur
+- Menu déroulant fournisseur dans le formulaire stock
+- Colonne fournisseur dans le tableau stock
+- Tableau stock groupé par catégorie avec stats (total unités, valeur HT)
+- Header catégorie cliquable pour réduire/agrandir
+- Boutons d'action visibles au hover uniquement
+- Alertes visuelles sur les catégories avec ruptures/stock bas
+### Fixed
+- Ordre des colonnes stock corrigé (Fournisseur après Produit)
+- populate supplierId dans GET /api/stocks
+
 ## [1.21.0] - 2026-07-08
 ### Added
 - Module scanner code-barres et QR code (/scan)

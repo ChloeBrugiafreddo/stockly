@@ -38,10 +38,10 @@ export async function POST(req: Request) {
     const companyId = (session.user as any).companyId
     await connectDB()
 
-    const { name, email, phone, address, country } = await req.json()
+    const { name, email, phone, address, country, notes } = await req.json()
     if (!name) return NextResponse.json({ error: 'Nom requis' }, { status: 400 })
 
-    const supplier = await Supplier.create({ companyId, name, email, phone, address, country })
+   const supplier = await Supplier.create({ companyId, name, email, phone, address, country, notes })
     return NextResponse.json(supplier, { status: 201 })
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 })
