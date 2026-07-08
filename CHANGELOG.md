@@ -13,6 +13,23 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.21.0] - 2026-07-08
+### Added
+- Module scanner code-barres et QR code (/scan)
+- Scan via caméra avec viseur animé et ligne de scan (BrowserMultiFormatReader)
+- Saisie manuelle du code en fallback si pas de caméra
+- Reconnaissance produit existant par SKU dans la BDD
+- Création automatique nouveau produit si code inconnu
+- Formulaire réception : quantité, fournisseur, notes pré-remplis
+- Mouvement stock IN créé automatiquement à la validation
+- Écran confirmation animé avec résumé de la réception
+- Route API GET /api/scan/lookup — recherche produit par code
+- Route API POST /api/scan/receive — enregistrement réception
+- Lien Scanner dans la sidebar (tous les rôles)
+- /scan ajouté dans les permissions de tous les rôles
+### Note
+- Test caméra mobile nécessite HTTPS — sera validé après déploiement Vercel
+
 ## [1.20.0] - 2026-07-06
 ### Added
 - Export Excel mis en forme avec xlsx-js-style (headers colorés, alternance lignes, bordures)

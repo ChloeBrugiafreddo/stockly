@@ -8,17 +8,9 @@ import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard'
 
 // Pages accessibles par rôle
 const rolePermissions: Record<string, string[]> = {
-  Admin: [
-    '/dashboard', '/stock', '/productions', '/customers',
-    '/suppliers', '/invoices', '/settings', '/reports',
-  ],
-  Manager: [
-    '/dashboard', '/stock', '/productions', '/customers',
-    '/suppliers', '/invoices',
-  ],
-  Employé: [
-    '/dashboard', '/stock', '/productions',
-  ],
+  Admin:   ['/dashboard', '/stock', '/scan', '/productions', '/customers', '/suppliers', '/invoices', '/settings'],
+  Manager: ['/dashboard', '/stock', '/scan', '/productions', '/customers', '/suppliers', '/invoices'],
+  Employé: ['/dashboard', '/stock', '/scan', '/productions'],
 }
 
 function isAllowed(pathname: string, roleName: string): boolean {
