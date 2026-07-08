@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { FileDown, Loader2, TrendingUp, TrendingDown } from 'lucide-react'
+import { exportToExcel } from '@/lib/exportExcel'
 
 export function KPIClient() {
   const [stockData, setStockData]       = useState<any>(null)
@@ -167,6 +168,52 @@ export function KPIClient() {
   const ps = prodsData?.summary
   const ms = movData?.summary
 
+  async function handleExportExcel() {
+    await exportToExcel([
+      {
+        name: 'Stock',
+        headers: ['État', 'SKU', 'Produit', 'Catégorie', 'Quantité', 'Seuil', 'Prix HT (€)', 'Valeur HT (€)'],
+        rows: (stockData?.rows || []).map((r: any) => [
+          r.etat, r.sku, r.name, r.category,
+          r.quantity, r.minimumStock,
+          r.unitPrice > 0 ? r.unitPrice.toFixed(2) : '—',
+          r.totalValue > 0 ? r.totalValue.toFixed(2) : '—',
+        ]),
+        colors: { header: '1D4ED8', accent: 'EFF6FF' },
+      },
+      {
+        name: 'Devis',
+        headers: ['Numéro', 'Date', 'Client', 'Statut', 'HT (€)', 'TVA (€)', 'TTC (€)'],
+        rows: (quotesData?.rows || []).map((r: any) => [
+          r.number,
+          new Date(r.date).toLocaleDateString('fr-FR'),
+          r.customer,
+          ({ DRAFT: 'Brouillon', SENT: 'Envoyé', PAID: 'Accepté', OVERDUE: 'Expiré', CANCELLED: 'Annulé' } as Record<string, string>)[r.status] || r.status,
+          r.amountHT.toFixed(2),
+          (r.amountHT * 0.20).toFixed(2),
+          r.amountTTC.toFixed(2),
+        ]),
+        colors: { header: '7C3AED', accent: 'F5F3FF' },
+      },
+      {
+        name: 'Productions',
+        headers: ['Référence', 'Nom', 'Statut', 'Composants', 'Coût HT (€)', 'CA HT (€)', 'Marge HT (€)'],
+        rows: (prodsData?.rows || []).map((r: any) => {
+          const margin = r.quotedAmount > 0 ? r.quotedAmount - r.componentsCost : null
+          return [
+            r.ref, r.name,
+            ({ EN_COURS: 'En cours', TERMINE: 'Terminé', ARCHIVE: 'Archivé' } as Record<string, string>)[r.status] || r.status,
+            r.componentsCount,
+            r.componentsCost.toFixed(2),
+            r.quotedAmount > 0 ? r.quotedAmount.toFixed(2) : '—',
+            margin !== null ? margin.toFixed(2) : '—',
+          ]
+        }),
+        colors: { header: 'D97706', accent: 'FFFBEB' },
+      },
+    ], `rapport-kpi-${new Date().toISOString().slice(0, 10)}`)
+  }
+
   return (
     <div>
       {/* Header */}
@@ -192,6 +239,19 @@ export function KPIClient() {
         >
           {exporting ? <Loader2 size={16} /> : <FileDown size={16} />}
           {exporting ? 'Génération…' : 'Exporter rapport complet PDF'}
+        </button>
+
+        <button
+          onClick={handleExportExcel}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            padding: '10px 20px', borderRadius: '10px',
+            border: '1px solid var(--card-border)',
+            background: 'var(--card-bg)', color: 'var(--foreground)',
+            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+          }}
+        >
+          📊 Exporter Excel
         </button>
       </div>
 

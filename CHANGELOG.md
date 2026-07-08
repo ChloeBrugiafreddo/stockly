@@ -13,6 +13,21 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.20.0] - 2026-07-06
+### Added
+- Export Excel mis en forme avec xlsx-js-style (headers colorés, alternance lignes, bordures)
+- Export Excel dans page Stock (bleu)
+- Export Excel dans page Devis (violet)
+- Export Excel rapport complet KPI 3 onglets (Stock + Devis + Productions)
+- Export PDF dans page Stock
+- Export PDF dans page Devis
+- Recherche globale fonctionnelle avec ⌘K (produits, clients, fournisseurs, productions, devis)
+- Navigation clavier dans les résultats (↑↓ + Entrée)
+- Protection des routes par rôle côté serveur dans app/(app)/layout.tsx
+- Middleware passant x-pathname sans bloquer /api/auth/
+### Fixed
+- Double + dans les boutons "Nouvelle production" et "Ajouter produit"
+
 ## [1.19.0] - 2026-07-06
 ### Added
 - Super Admin Stockly : panneau d'administration global

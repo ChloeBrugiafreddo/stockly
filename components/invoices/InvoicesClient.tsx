@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Search, RefreshCw } from 'lucide-react'
+import { Plus, Search, RefreshCw, FileDown } from 'lucide-react'
 import { InvoiceTable } from './InvoiceTable'
 import { InvoiceFormModal } from './InvoiceFormModal'
 import { InvoiceDetailModal } from './InvoiceDetailModal'
+import { exportToExcel } from '@/lib/exportExcel'
 
 export interface InvoiceItem {
   description: string
@@ -76,6 +77,63 @@ export function InvoicesClient() {
   const enAttente = items.filter(i => i.status === 'SENT' || i.status === 'OVERDUE').length
   const acceptes = items.filter(i => i.status === 'PAID').length
 
+  async function handleExportExcel() {
+      await exportToExcel([
+        {
+          name: 'Devis',
+          headers: ['Numéro', 'Date', 'Client', 'Statut', 'Total HT (€)', 'TVA 20% (€)', 'Total TTC (€)', 'Échéance'],
+          rows: items.map(inv => [
+            inv.invoiceNumber,
+            new Date(inv.createdAt).toLocaleDateString('fr-FR'),
+            inv.customerName,
+            { DRAFT: 'Brouillon', SENT: 'Envoyé', PAID: 'Accepté', OVERDUE: 'Expiré', CANCELLED: 'Annulé' }[inv.status] || inv.status,
+            inv.amount.toFixed(2),
+            (inv.amount * 0.20).toFixed(2),
+            (inv.amount * 1.20).toFixed(2),
+            inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('fr-FR') : '—',
+          ]),
+          colors: { header: '7C3AED', accent: 'F5F3FF' }, // violet
+        },
+      ], `devis-${new Date().toISOString().slice(0, 10)}`)
+    }
+
+    async function handleExportPDF() {
+      const r = await fetch(`/api/reports/quotes?from=2020-01-01&to=${new Date().toISOString().slice(0,10)}`)
+      const data = await r.json()
+
+      const { jsPDF } = await import('jspdf')
+      const { default: autoTable } = await import('jspdf-autotable')
+      const doc = new jsPDF({ orientation: 'landscape' })
+      const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+
+      doc.setFillColor(124, 58, 237)
+      doc.rect(0, 0, 297, 28, 'F')
+      doc.setFontSize(18); doc.setTextColor(255,255,255); doc.setFont('helvetica','bold')
+      doc.text('STOCKLY — Devis & Chiffre d\'Affaires', 14, 12)
+      doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(221,214,254)
+      doc.text(`Généré le ${date}`, 14, 22)
+
+      autoTable(doc, {
+        startY: 36,
+        head: [['Numéro', 'Date', 'Client', 'Statut', 'Total HT', 'TVA 20%', 'Total TTC', 'Échéance']],
+        body: items.map(inv => [
+          inv.invoiceNumber,
+          new Date(inv.createdAt).toLocaleDateString('fr-FR'),
+          inv.customerName,
+          { DRAFT: 'Brouillon', SENT: 'Envoyé', PAID: 'Accepté', OVERDUE: 'Expiré', CANCELLED: 'Annulé' }[inv.status] || inv.status,
+          `${inv.amount.toFixed(2)} €`,
+          `${(inv.amount * 0.20).toFixed(2)} €`,
+          `${(inv.amount * 1.20).toFixed(2)} €`,
+          inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('fr-FR') : '—',
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: [124, 58, 237], fontSize: 8 },
+        bodyStyles: { fontSize: 8 },
+        margin: { left: 14, right: 14 },
+      })
+
+      doc.save(`devis-${new Date().toISOString().slice(0,10)}.pdf`)
+    }
   return (
     <div style={{ maxWidth: '1200px' }}>
 
@@ -90,18 +148,36 @@ export function InvoicesClient() {
             {enAttente > 0 && ` — ${enAttente} en attente de réponse`}
           </p>
         </div>
-        <button
-          onClick={() => setFormOpen(true)}
-          style={{
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={handleExportPDF} style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '10px 16px', borderRadius: '10px',
+            border: '1px solid var(--card-border)',
+            background: 'var(--card-bg)', color: 'var(--foreground)',
+            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+          }}>
+            <FileDown size={15} />
+            PDF
+          </button>
+          <button onClick={handleExportExcel} style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '10px 16px', borderRadius: '10px',
+            border: '1px solid var(--card-border)',
+            background: 'var(--card-bg)', color: 'var(--foreground)',
+            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+          }}>
+            📊 Excel
+          </button>
+          <button onClick={() => setFormOpen(true)} style={{
             display: 'flex', alignItems: 'center', gap: '8px',
             padding: '10px 18px', borderRadius: '10px',
             background: '#3b82f6', color: 'white', border: 'none',
             fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-          }}
-        >
-          <Plus size={16} />
-          Nouveau devis
-        </button>
+          }}>
+            <Plus size={16} />
+            Nouveau devis
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
