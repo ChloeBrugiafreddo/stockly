@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const search = searchParams.get('search') || ''
     const status = searchParams.get('status') || ''
-
+    
     const filter: any = { companyId }
     if (search) {
       filter.$or = [
@@ -28,6 +28,10 @@ export async function GET(req: Request) {
       .sort({ createdAt: -1 })
       .limit(200)
       .lean()
+
+    const customerId = searchParams.get('customerId') || ''
+    if (customerId) filter.customerId = customerId
+
 
     return NextResponse.json({ items: productions })
   } catch (e: any) {

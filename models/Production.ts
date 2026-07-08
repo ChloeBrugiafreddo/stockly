@@ -7,6 +7,7 @@ const ProductionComponentSchema = new Schema({
   quantity:    { type: Number, required: true },
   addedAt:     { type: Date, default: Date.now },
   addedBy:     { type: String },
+  customerId: { type: Schema.Types.ObjectId, ref: 'Customer', default: null },
 })
 
 const ProductionSchema = new Schema({
@@ -17,6 +18,7 @@ const ProductionSchema = new Schema({
   status:      { type: String, enum: ['EN_COURS', 'TERMINE', 'ARCHIVE'], default: 'EN_COURS' },
   components:  [ProductionComponentSchema],
   notes:       { type: String },
+  customerId: { type: Schema.Types.ObjectId, ref: 'Customer', default: null },
 }, { timestamps: true })
 
 ProductionSchema.index({ companyId: 1, ref: 1 }, { unique: true })

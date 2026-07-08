@@ -13,6 +13,19 @@ Versioning : [Semantic Versioning](https://semver.org)
 - Page Véhicules (module automobile)
 - Page Factures
 
+## [1.23.0] - 2026-07-08
+### Added
+- Page Clients redesignée : cartes groupées par lettre alphabétique
+- Avatar initiale coloré par client
+- Email et téléphone cliquables (mailto: et tel:)
+- Fiche client : onglets Devis + Productions
+- Stats client : total devis, CA TTC, encaissé, nb productions
+- Productions liées au client dans la fiche
+- Bouton historique sur chaque carte client
+### Fixed
+- CustomerHistoryModal : taxAmount remplacé par TVA calculée à l'affichage
+- Statuts devis corrigés (Accepté, Expiré au lieu de Payée, En retard)
+
 ## [1.22.0] - 2026-07-08
 ### Added
 - Page Fournisseurs redesignée : cartes groupées par pays
