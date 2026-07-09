@@ -500,11 +500,12 @@ export function SectorManager({ dark }: Props) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {sectors.map(sector => (
             <div key={sector._id} style={{
-              display: 'flex', alignItems: 'center', gap: '16px',
-              padding: '20px 22px', borderRadius: '14px',
-              background: c.card, border: `1px solid ${c.border}`,
-              boxShadow: dark ? 'none' : '0 2px 8px rgba(0,0,0,0.04)',
-              transition: 'transform 0.15s',
+                display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '16px', borderRadius: '14px',
+                background: c.card, border: `1px solid ${c.border}`,
+                boxShadow: dark ? 'none' : '0 2px 8px rgba(0,0,0,0.04)',
+                overflow: 'hidden', minWidth: 0,
+                transition: 'transform 0.15s',
             }}
               onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)'}
               onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'}
@@ -521,17 +522,17 @@ export function SectorManager({ dark }: Props) {
               </div>
 
               {/* Infos */}
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <p style={{ fontSize: '16px', fontWeight: 700, color: c.text }}>{sector.name}</p>
+              <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: c.text }}>{sector.name}</p>
                   {sector.isSystem && (
                     <span style={{ fontSize: '11px', background: '#eff6ff', color: '#1d4ed8', padding: '2px 8px', borderRadius: '8px', fontWeight: 700, border: '1px solid #bfdbfe' }}>
                       Système
                     </span>
                   )}
                 </div>
-                <p style={{ fontSize: '13px', color: c.muted }}>
-                  {sector.icons?.product} {sector.vocab?.products} · {sector.icons?.production} {sector.vocab?.productions}
+                <p style={{ fontSize: '12px', color: c.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {sector.icons?.product} {sector.vocab?.products} · {sector.icons?.production} {sector.vocab?.productions}
                   {sector.defaultCategories?.length > 0 && (
                     <span style={{ marginLeft: '8px', color: c.muted }}>
                       · {sector.defaultCategories.length} catégories
@@ -540,11 +541,18 @@ export function SectorManager({ dark }: Props) {
                 </p>
               </div>
 
-              {/* Bande couleur */}
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {[sector.theme?.primary, sector.theme?.primaryDark, sector.theme?.accent].map((col, i) => (
-                  col && <div key={i} style={{ width: '16px', height: '16px', borderRadius: '50%', background: col, border: `1px solid ${c.border}` }} />
-                ))}
+              {/* Bande couleur — dans chaque carte secteur */}
+              <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                {[sector.theme?.primary, sector.theme?.primaryDark, sector.theme?.accent]
+                  .filter(Boolean)
+                  .map((col, i) => (
+                    <div key={i} style={{
+                      width: '14px', height: '14px', borderRadius: '50%',
+                      background: col, border: `1px solid ${c.border}`,
+                      flexShrink: 0,
+                    }} />
+                  ))
+                }
               </div>
 
                 <button onClick={() => openEdit(sector)} style={{

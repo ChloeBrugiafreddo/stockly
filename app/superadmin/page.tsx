@@ -62,42 +62,46 @@ export default function SuperAdminPage() {
       {/* Header */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 40px', height: '64px',
+        padding: '0 20px', height: '64px',
         background: c.navBg,
         borderBottom: `1px solid ${c.border}`,
         boxShadow: dark ? 'none' : '0 1px 8px rgba(0,0,0,0.05)',
+        flexWrap: 'wrap', gap: '8px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
-            width: '36px', height: '36px', borderRadius: '10px',
+            width: '32px', height: '32px', borderRadius: '10px',
             background: '#1d4ed8',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '18px',
+            fontSize: '16px', flexShrink: 0,
           }}>⚡</div>
           <div>
-            <p style={{ fontSize: '15px', fontWeight: 800, color: c.text, letterSpacing: '-0.3px' }}>
+            <p style={{ fontSize: '13px', fontWeight: 800, color: c.text, letterSpacing: '-0.3px' }}>
               Stockly <span style={{ color: '#1d4ed8' }}>Super Admin</span>
             </p>
-            <p style={{ fontSize: '11px', color: c.muted }}>Panneau d'administration global</p>
+            <p style={{ fontSize: '10px', color: c.muted, display: 'none' }} className="hide-mobile">
+              Panneau d'administration global
+            </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          {/* Toggle dark/light */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <button onClick={() => setDark(!dark)} style={{
-            width: '36px', height: '36px', borderRadius: '8px',
+            width: '34px', height: '34px', borderRadius: '8px',
             border: `1px solid ${c.border}`, background: c.panel,
-            cursor: 'pointer', fontSize: '16px',
+            cursor: 'pointer', fontSize: '14px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
           }}>
             {dark ? '☀️' : '🌙'}
           </button>
           <button onClick={handleLogout} style={{
-            padding: '8px 18px', borderRadius: '8px',
+            padding: '7px 12px', borderRadius: '8px',
             border: `1.5px solid ${c.border}`, background: 'transparent',
-            color: c.muted, fontSize: '13px', cursor: 'pointer', fontWeight: 500,
+            color: c.muted, fontSize: '12px', cursor: 'pointer', fontWeight: 500,
+            whiteSpace: 'nowrap',
           }}>
-            Se déconnecter
+            Déconnexion
           </button>
         </div>
       </div>
