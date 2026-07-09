@@ -188,7 +188,7 @@ export function SectorManager({ dark }: Props) {
           </p>
 
           {/* Nom + description */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', marginBottom: '16px' }}>
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={lbl}>Nom du secteur *</label>
               <input style={inp} required value={form.name}
@@ -259,7 +259,7 @@ export function SectorManager({ dark }: Props) {
           <p style={{ fontSize: '12px', fontWeight: 700, color: c.muted, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '14px' }}>
             Vocabulaire
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '24px' }}>
             {[
               { key: 'vocabProduct', label: 'Produit (singulier)', placeholder: 'ex: Pièce, Matériau' },
               { key: 'vocabProducts', label: 'Produits (pluriel)', placeholder: 'ex: Pièces, Matériaux' },
@@ -283,7 +283,7 @@ export function SectorManager({ dark }: Props) {
           <p style={{ fontSize: '12px', fontWeight: 700, color: c.muted, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '14px' }}>
             Icônes
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
             {[
               { key: 'iconProduct', label: `Icône ${form.vocabProduct || 'produit'}` },
               { key: 'iconProduction', label: `Icône ${form.vocabProduction || 'production'}` },

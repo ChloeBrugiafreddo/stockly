@@ -41,7 +41,8 @@ export function GlobalStats({ dark }: Props) {
       </h2>
 
       {/* KPI globaux */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '14px', marginBottom: '32px' }}>
+      {/* KPI — 2 colonnes sur mobile, 6 sur desktop */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px', marginBottom: '32px' }}>
         {[
           { label: 'Entreprises', value: data?.companies || 0, icon: '🏢', color: '#1d4ed8', bg: '#eff6ff' },
           { label: 'Utilisateurs', value: data?.users || 0, icon: '👥', color: '#7c3aed', bg: '#f5f3ff' },
@@ -65,8 +66,9 @@ export function GlobalStats({ dark }: Props) {
         ))}
       </div>
 
-      {/* Deux colonnes */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+     
+      {/* Deux colonnes — 1 colonne sur mobile */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '24px' }}>
 
         {/* Répartition par secteur */}
         <div style={{
@@ -143,8 +145,9 @@ export function GlobalStats({ dark }: Props) {
             Toutes les entreprises ({data?.companies || 0})
           </h3>
         </div>
+        {/* Tableau entreprises — overflowX auto */}
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+          <table style={{ width: '100%', minWidth: '600px', borderCollapse: 'collapse', fontSize: '13px' }}>
             <thead>
                 <tr style={{ background: c.card2, borderBottom: `1px solid ${c.border}` }}>
                     {['Entreprise', 'Secteur', 'Utilisateurs', 'Produits', 'Devis', 'Productions', 'Créée le', 'Actions'].map(h => (
