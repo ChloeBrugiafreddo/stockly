@@ -210,7 +210,12 @@ export function SectorManager({ dark }: Props) {
           <p style={{ fontSize: '12px', fontWeight: 700, color: c.muted, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '14px' }}>
             Thème couleurs
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '16px' }}>
+          {/* Couleurs — 2 colonnes fixes */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '12px', marginBottom: '16px',
+            }}>
             {[
               { key: 'primary', label: 'Couleur principale' },
               { key: 'primaryDark', label: 'Variante foncée' },

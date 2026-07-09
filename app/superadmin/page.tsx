@@ -62,43 +62,34 @@ export default function SuperAdminPage() {
       {/* Header */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 20px', height: '64px',
+        padding: '12px 16px',
         background: c.navBg,
         borderBottom: `1px solid ${c.border}`,
-        boxShadow: dark ? 'none' : '0 1px 8px rgba(0,0,0,0.05)',
-        flexWrap: 'wrap', gap: '8px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{
-            width: '32px', height: '32px', borderRadius: '10px',
+            width: '30px', height: '30px', borderRadius: '8px',
             background: '#1d4ed8',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '16px', flexShrink: 0,
+            fontSize: '14px', flexShrink: 0,
           }}>⚡</div>
-          <div>
-            <p style={{ fontSize: '13px', fontWeight: 800, color: c.text, letterSpacing: '-0.3px' }}>
-              Stockly <span style={{ color: '#1d4ed8' }}>Super Admin</span>
-            </p>
-            <p style={{ fontSize: '10px', color: c.muted, display: 'none' }} className="hide-mobile">
-              Panneau d'administration global
-            </p>
-          </div>
+          <p style={{ fontSize: '13px', fontWeight: 800, color: c.text }}>
+            Stockly <span style={{ color: '#1d4ed8' }}>Super Admin</span>
+          </p>
         </div>
-
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
           <button onClick={() => setDark(!dark)} style={{
-            width: '34px', height: '34px', borderRadius: '8px',
+            width: '30px', height: '30px', borderRadius: '7px',
             border: `1px solid ${c.border}`, background: c.panel,
-            cursor: 'pointer', fontSize: '14px',
+            cursor: 'pointer', fontSize: '13px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
           }}>
             {dark ? '☀️' : '🌙'}
           </button>
           <button onClick={handleLogout} style={{
-            padding: '7px 12px', borderRadius: '8px',
-            border: `1.5px solid ${c.border}`, background: 'transparent',
-            color: c.muted, fontSize: '12px', cursor: 'pointer', fontWeight: 500,
+            padding: '6px 10px', borderRadius: '7px',
+            border: `1px solid ${c.border}`, background: 'transparent',
+            color: c.muted, fontSize: '11px', cursor: 'pointer',
             whiteSpace: 'nowrap',
           }}>
             Déconnexion
