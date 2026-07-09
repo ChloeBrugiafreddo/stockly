@@ -138,44 +138,45 @@ export function InvoicesClient() {
     <div style={{ maxWidth: '1200px' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '4px' }}>
-            Devis
-          </h1>
-          <p style={{ fontSize: '14px', color: 'var(--muted)' }}>
-            {items.length} devis
-            {enAttente > 0 && ` — ${enAttente} en attente de réponse`}
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={handleExportPDF} style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '10px 16px', borderRadius: '10px',
-            border: '1px solid var(--card-border)',
-            background: 'var(--card-bg)', color: 'var(--foreground)',
-            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
-          }}>
-            <FileDown size={15} />
-            PDF
-          </button>
-          <button onClick={handleExportExcel} style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '10px 16px', borderRadius: '10px',
-            border: '1px solid var(--card-border)',
-            background: 'var(--card-bg)', color: 'var(--foreground)',
-            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
-          }}>
-            📊 Excel
-          </button>
+      <div style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h1 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '4px' }}>
+              Devis
+            </h1>
+            <p style={{ fontSize: '14px', color: 'var(--muted)' }}>
+              {items.length} devis{enAttente > 0 && ` — ${enAttente} en attente`}
+            </p>
+          </div>
           <button onClick={() => setFormOpen(true)} style={{
             display: 'flex', alignItems: 'center', gap: '8px',
             padding: '10px 18px', borderRadius: '10px',
             background: '#3b82f6', color: 'white', border: 'none',
             fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+            whiteSpace: 'nowrap',
           }}>
             <Plus size={16} />
             Nouveau devis
+          </button>
+        </div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button onClick={handleExportPDF} style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '8px 14px', borderRadius: '10px',
+            border: '1px solid var(--card-border)',
+            background: 'var(--card-bg)', color: 'var(--foreground)',
+            fontSize: '13px', cursor: 'pointer',
+          }}>
+            <FileDown size={14} /> PDF
+          </button>
+          <button onClick={handleExportExcel} style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '8px 14px', borderRadius: '10px',
+            border: '1px solid var(--card-border)',
+            background: 'var(--card-bg)', color: 'var(--foreground)',
+            fontSize: '13px', cursor: 'pointer',
+          }}>
+            📊 Excel
           </button>
         </div>
       </div>

@@ -217,8 +217,8 @@ export function KPIClient() {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
-        <div>
+      <div style={{ marginBottom: '28px' }}>
+        <div style={{ marginBottom: '8px' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '4px' }}>
             KPI & Rapports
           </h2>
@@ -226,33 +226,29 @@ export function KPIClient() {
             Année {new Date().getFullYear()} — Mouvements : 30 derniers jours
           </p>
         </div>
-        <button
-          onClick={handleExportAll}
-          disabled={exporting}
-          style={{
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button onClick={handleExportAll} disabled={exporting} style={{
             display: 'flex', alignItems: 'center', gap: '8px',
-            padding: '10px 20px', borderRadius: '10px',
+            padding: '9px 16px', borderRadius: '10px',
             background: '#0f172a', color: 'white', border: 'none',
-            fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+            fontSize: '13px', fontWeight: 600, cursor: 'pointer',
             opacity: exporting ? 0.6 : 1,
-          }}
-        >
-          {exporting ? <Loader2 size={16} /> : <FileDown size={16} />}
-          {exporting ? 'Génération…' : 'Exporter rapport complet PDF'}
-        </button>
-
-        <button
-          onClick={handleExportExcel}
-          style={{
+            whiteSpace: 'nowrap',
+          }}>
+            {exporting ? <Loader2 size={14} /> : <FileDown size={14} />}
+            {exporting ? 'Génération…' : 'PDF complet'}
+          </button>
+          <button onClick={handleExportExcel} style={{
             display: 'flex', alignItems: 'center', gap: '8px',
-            padding: '10px 20px', borderRadius: '10px',
+            padding: '9px 16px', borderRadius: '10px',
             border: '1px solid var(--card-border)',
             background: 'var(--card-bg)', color: 'var(--foreground)',
-            fontSize: '14px', fontWeight: 500, cursor: 'pointer',
-          }}
-        >
-          📊 Exporter Excel
-        </button>
+            fontSize: '13px', fontWeight: 500, cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}>
+            📊 Excel
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}
